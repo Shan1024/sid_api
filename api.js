@@ -16,7 +16,6 @@ var chalk       = require('chalk');
 
 var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config      = require('./config'); // get our config file
-var User        = require('./app/models/user'); // get our mongoose model
 
 // This line is from the Node.js HTTPS documentation.
 var options = {
@@ -35,7 +34,7 @@ app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
-//creating routes
+// creating routes
 require('./app/routes.js')(app, express);
 // app.use(express.static(__dirname + '/'))
 
