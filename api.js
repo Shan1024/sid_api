@@ -35,15 +35,12 @@ app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
+//creating routes
 require('./app/routes.js')(app, express);
 // app.use(express.static(__dirname + '/'))
 
-
-var httpPort = 9090;
-var httpsPort = 443;
-
 // Create an HTTP service.
-http.createServer(app).listen(httpPort);
+http.createServer(app).listen(config.httpPort);
 
 // Create an HTTPS service identical to the HTTP service.
-https.createServer(options, app).listen(httpsPort);
+https.createServer(options, app).listen(config.httpsPort);
