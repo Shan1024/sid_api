@@ -1,4 +1,5 @@
-var chalk = require('chalk');
+var chalk   = require('chalk');
+var User    = require('./models/user'); // get our mongoose model
 
 module.exports = function(app, express) {
 
@@ -28,8 +29,32 @@ module.exports = function(app, express) {
       console.log(chalk.yellow('Username: ' + username));
       if(password){
         console.log(chalk.yellow('Password: ' + password));
-        console.log(chalk.green('User created'));
-        res.json({ success: true, message: 'User created' });
+
+        User.findOne({
+          name: username
+        }, function(err, user) {
+          if(err){
+            res.json({ success: false, message: 'Error' });
+          }else{
+            if(user){
+              console.log(chalk.red('User already available'));
+              res.json({ success: false, message: 'User already available' });
+            }else{
+
+              var user = new User({
+                'user.local.username': username,
+                'user.local.password': password,
+              });
+
+              // save the sample user
+              user.save(function(err) {
+                if (err) throw err;
+                console.log(chalk.green('User created'));
+                res.json({ success: true, message: 'User created' });
+              });
+            }
+          }
+        });
       }else{
         console.log(chalk.red('Authentication failed. Password required.'));
         res.json({ success: false, message: 'Authentication failed. Password required.' });
