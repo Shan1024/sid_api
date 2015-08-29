@@ -12,15 +12,16 @@ var http        = require('http');
 var fs          = require('fs');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
+var chalk       = require('chalk');
 
-var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config = require('./config'); // get our config file
-var User   = require('./app/models/user'); // get our mongoose model
+var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var config      = require('./config'); // get our config file
+var User        = require('./app/models/user'); // get our mongoose model
 
 // This line is from the Node.js HTTPS documentation.
 var options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
+  key: fs.readFileSync(config.key),
+  cert: fs.readFileSync(config.cert)
 };
 
 mongoose.connect(config.database); // connect to database

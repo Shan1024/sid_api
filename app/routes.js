@@ -1,8 +1,10 @@
+var chalk = require('chalk');
+
 module.exports = function(app, express) {
 
   // ROUTES FOR OUR API
   // =============================================================================
-  var router = express.Router();              // get an instance of the express Router
+  var router = express.Router();// get an instance of the express Router
 
   // middleware to use for all requests
   router.use(function(req, res, next) {
@@ -15,6 +17,27 @@ module.exports = function(app, express) {
   router.get('/', function(req, res) {
       res.json({ message: 'Welcome to sID api !!!' });
       // res.cookie('name','shan').send("Hello");
+  });
+
+  router.post('/setup', function(req, res) {
+
+    var username = req.body.username;
+    var password = req.body.password
+
+    if(username){
+      console.log(chalk.yellow('Username: ' + username));
+      if(password){
+        console.log(chalk.yellow('Password: ' + password));
+        console.log(chalk.green('User created'));
+        res.json({ success: true, message: 'User created' });
+      }else{
+        console.log(chalk.red('Authentication failed. Password required.'));
+        res.json({ success: false, message: 'Authentication failed. Password required.' });
+      }
+    }else{
+      console.log(chalk.red('Authentication failed. Username required.'));
+      res.json({ success: false, message: 'Authentication failed. Username required.' });
+    }
   });
 
 
