@@ -1,5 +1,5 @@
-var chalk   = require('chalk');
-var User    = require('./models/user'); // get our mongoose model
+var chalk = require('chalk');
+var User  = require('./models/user'); // get our mongoose model
 
 module.exports = function(app, express) {
 
@@ -31,14 +31,15 @@ module.exports = function(app, express) {
         console.log(chalk.yellow('Password: ' + password));
 
         User.findOne({
-          name: username
+          'user.local.username': username
         }, function(err, user) {
           if(err){
+            console.log(chalk.red('Error'));
             res.json({ success: false, message: 'Error' });
           }else{
             if(user){
-              console.log(chalk.red('User already available'));
-              res.json({ success: false, message: 'User already available' });
+              console.log(chalk.red('User already exists'));
+              res.json({ success: false, message: 'User already exists' });
             }else{
 
               var user = new User({
@@ -48,7 +49,10 @@ module.exports = function(app, express) {
 
               // save the sample user
               user.save(function(err) {
-                if (err) throw err;
+                if (err) {
+                  console.log(chalk.red('Error'));
+                  res.json({ success: false, message: 'Error' });
+                }
                 console.log(chalk.green('User created'));
                 res.json({ success: true, message: 'User created' });
               });
