@@ -2,6 +2,7 @@
   "name": "restful",
   "main": "server.js",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "latest",
     "chalk": "^1.1.1",
     "express": "latest",
