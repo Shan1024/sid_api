@@ -31,6 +31,19 @@ module.exports = function(app, express) {
 
       if(email){
 
+        var tempUser = {
+          iss: 'sID',
+          context:{
+            email: email
+          }
+        };
+
+        var apiSecret = app.get('apiSecret');
+
+        var token = jwt.sign(tempUser, apiSecret, {
+          expiresInMinutes: 1440 // expires in 24 hours
+        });
+
         var mailOptions = {
             from: 'sID <fyp.social.id@gmail.com>', // sender address
             to: email, // list of receivers
@@ -38,17 +51,18 @@ module.exports = function(app, express) {
             // text: 'Hello world', // plaintext body
             // html body
             html: 'Your account has been created. Please click the following link to verify the account<br><br>'
-            +'https://localhost/verify?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzSUQiLCJjb250ZXh0Ijp7InVzZXJuYW1lIjoic2hhbiJ9LCJpYXQiOjE0NDA5MjE0MTEsImV4cCI6MTQ0MTAwNzgxMX0.HPbOaWP6cLlZlszSUsNGpOklSN2iqJKBhx3MQZiDOq0'
+            +'https://localhost/verify?token='+token
         };
 
         // send mail with defined transport object
         transporter.sendMail(mailOptions, function(error, info){
             if(error){
                 console.log(chalk.red(error));
-                res.status(404).json({message: 'Error occured'});
+                res.status(404).json({message: error});
+            }else{
+              console.log(chalk.yellow('Email sent: ' + info.response));
+              res.status(404).json({message: 'Email sent successfully'});
             }
-            console.log(chalk.yellow('Email sent: ' + info.response));
-            res.status(404).json({message: 'Email sent successfully'});
         });
 
       }else{
@@ -63,6 +77,37 @@ module.exports = function(app, express) {
       // });
 
 
+    });
+
+    baseRouter.route('/verify')
+      .get(function(req,res){
+      var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+      // decode token
+      if (token) {
+
+        // verifies secret and checks exp
+        jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
+          if (err) {
+            return res.json({ success: false, message: 'Failed to authenticate token.' });
+          } else {
+            // if everything is good, save to request for use in other routes
+            // req.decoded = decoded;
+            console.log(chalk.yellow('decoded: '+decoded));
+            console.log(chalk.magenta('Email Verified: ' + decoded.context.email));
+            res.send(decoded);
+          }
+        });
+
+      } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+      }
     });
 
   // baseRouter.route('/email')
@@ -195,7 +240,7 @@ module.exports = function(app, express) {
 
               console.log(chalk.green('Password correct'));
 
-              var apiSecret=app.get('apiSecret');
+              var apiSecret = app.get('apiSecret');
 
               console.log(chalk.yellow('apiSecret' + apiSecret ));
               // if user is found and password is right
