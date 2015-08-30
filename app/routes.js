@@ -1,4 +1,5 @@
 var chalk = require('chalk');
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var User  = require('./models/user'); // get our mongoose model
 
 module.exports = function(app, express) {
@@ -25,7 +26,7 @@ module.exports = function(app, express) {
   router.post('/setup', function(req, res) {
 
     var username = req.body.username;
-    var password = req.body.password
+    var password = req.body.password;
 
     if(username){
       console.log(chalk.yellow('Username: ' + username));
@@ -74,42 +75,78 @@ module.exports = function(app, express) {
   });
 
   //Route to authenticate
-  // router.post('/authenticate', function(req, res) {
-  //
-  //   // find the user
-  //   User.findOne({
-  //     name: req.body.name
-  //   }, function(err, user) {
-  //
-  //     if (err) throw err;
-  //
-  //     if (!user) {
-  //       res.json({ success: false, message: 'Authentication failed. User not found.' });
-  //     } else if (user) {
-  //
-  //       // check if password matches
-  //       if (user.password != req.body.password) {
-  //         res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-  //       } else {
-  //
-  //         // if user is found and password is right
-  //         // create a token
-  //         var token = jwt.sign(user, app.get('superSecret'), {
-  //           expiresInMinutes: 1440 // expires in 24 hours
-  //         });
-  //
-  //         // return the information including token as JSON
-  //         res.json({
-  //           success: true,
-  //           message: 'Enjoy your token!',
-  //           token: token
-  //         });
-  //       }
-  //
-  //     }
-  //
-  //   });
-  // });
+  router.post('/authenticate', function(req, res) {
+
+    var username = req.body.username;
+    var password = req.body.password;
+
+    if(username){
+      console.log(chalk.yellow('Username: ' + username));
+      // find the user
+
+      if(password){
+        console.log(chalk.yellow('Password: ' + password));
+
+        User.findOne({
+          'user.local.username': username
+        }, function(err, user) {
+
+          if (err) throw err;
+
+          if (!user) {
+            res.json({ success: false, message: 'Authentication failed. User not found.' });
+          } else if (user) {
+
+            console.log(chalk.blue('User: '+user));
+
+            var hash = user.generateHash(password);
+            console.log(chalk.green('Hash: ' + hash));
+
+            // check if password matches
+            if (!user.validPassword(password)) {
+              res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+            } else {
+
+              console.log(chalk.green('Password correct'));
+
+              var apiSecret=app.get('apiSecret');
+
+              console.log(chalk.yellow('apiSecret' + apiSecret ));
+              // if user is found and password is right
+              // create a token
+
+              var tempUser = {
+                iss: 'sID',
+                context:{
+                  username: user.user.local.username
+                }
+              };
+
+              var token = jwt.sign(tempUser, apiSecret, {
+                expiresInMinutes: 1440 // expires in 24 hours
+              });
+
+              // return the information including token as JSON
+              res.json({
+                success: true,
+                message: 'Enjoy your token!',
+                token: token
+              });
+            }
+
+          }
+
+        });
+      }else{
+        console.log(chalk.red('Authentication failed. Password required.'));
+        res.json({ success: false, message: 'Authentication failed. Password required.' });
+      }
+
+    }else{
+      res.json({ success: false, message: 'Authentication failed. Username required.' });
+    }
+
+  });
 
 
   // // on routes that end in /bears
