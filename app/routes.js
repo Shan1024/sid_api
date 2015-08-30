@@ -44,6 +44,8 @@ module.exports = function(app, express) {
           expiresInMinutes: 1440 // expires in 24 hours
         });
 
+        var host = app.get('host');
+
         var mailOptions = {
             from: 'sID <fyp.social.id@gmail.com>', // sender address
             to: email, // list of receivers
@@ -51,7 +53,7 @@ module.exports = function(app, express) {
             // text: 'Hello world', // plaintext body
             // html body
             html: 'Your account has been created. Please click the following link to verify the account<br><br>'
-            +'https://localhost/verify?token='+token
+            +host+'/verify?token='+token
         };
 
         // send mail with defined transport object
@@ -93,9 +95,46 @@ module.exports = function(app, express) {
           } else {
             // if everything is good, save to request for use in other routes
             // req.decoded = decoded;
+
+            var username = decoded.context.email;
+
             console.log(chalk.yellow('decoded: '+decoded));
-            console.log(chalk.magenta('Email Verified: ' + decoded.context.email));
-            res.send(decoded);
+            console.log(chalk.magenta('Email: ' + username));
+
+            User.findOne({
+              'user.local.username': username
+            }, function(err, user) {
+              if(err){
+                res.status(403).json({ success: false, message: 'Error occured - ' + err });
+                console.log(chalk.red('Error: '+err));
+              }else{
+
+                if(user){
+
+                  if(user.user.local.verified==true){
+                    res.json({ success: false, message: username+' already verified'});
+                    console.log(chalk.red(username+' already verified'));
+                  }else{
+                    user.user.local.verified=true;
+
+                    console.log(chalk.cyan('User: '+user));
+
+                    user.save(function (err) {
+                      if (err){
+                        res.status(403).json({ success: false, message: 'Error occured - ' + err });
+                        console.log(chalk.red('Error: '+err));
+                      }else{
+                        res.json({ success: true, message: username+' verified'});
+                        console.log(chalk.green(username+' verified'));
+                      }
+                    });
+                  }
+                }else{
+                  res.status(403).json({ success: false, message: 'Username not found'});
+                  console.log(chalk.red('Username, '+username+' not found'));
+                }
+              }
+            });
           }
         });
 
@@ -406,11 +445,11 @@ module.exports = function(app, express) {
     //      });
     //  });
 
+  // REGISTER OUR ROUTES -------------------------------
 
   // more routes for our API will happen here
   app.use('/', baseRouter);
 
-  // REGISTER OUR ROUTES -------------------------------
   // all of our routes will be prefixed with /api
   app.use('/api', secureRouter);
 }
