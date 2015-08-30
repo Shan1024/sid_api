@@ -1,8 +1,21 @@
 var chalk = require('chalk');
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var User  = require('./models/user'); // get our mongoose model
+var nodemailer = require("nodemailer");
 
 module.exports = function(app, express) {
+
+  /*
+      Here we are configuring our SMTP Server details.
+      STMP is mail server which is responsible for sending and recieving email.
+  */
+  var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+          user: "fyp.social.id@gmail.com",
+          pass: "sid@uomfyp"
+      }
+  });
 
   var baseRouter = express.Router();
 
@@ -12,6 +25,85 @@ module.exports = function(app, express) {
       // res.cookie('name','shan').send("Hello");
   });
 
+  baseRouter.route('/sendEmail')
+    .post(function(req,res){
+      var email = req.body.email;
+
+      if(email){
+
+        var mailOptions = {
+            from: 'sID <fyp.social.id@gmail.com>', // sender address
+            to: email, // list of receivers
+            subject: 'sID Account Verification', // Subject line
+            // text: 'Hello world', // plaintext body
+            // html body
+            html: 'Your account has been created. Please click the following link to verify the account<br><br>'
+            +'https://localhost/verify?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzSUQiLCJjb250ZXh0Ijp7InVzZXJuYW1lIjoic2hhbiJ9LCJpYXQiOjE0NDA5MjE0MTEsImV4cCI6MTQ0MTAwNzgxMX0.HPbOaWP6cLlZlszSUsNGpOklSN2iqJKBhx3MQZiDOq0'
+        };
+
+        // send mail with defined transport object
+        transporter.sendMail(mailOptions, function(error, info){
+            if(error){
+                console.log(chalk.red(error));
+                res.status(404).json({message: 'Error occured'});
+            }
+            console.log(chalk.yellow('Email sent: ' + info.response));
+            res.status(404).json({message: 'Email sent successfully'});
+        });
+
+      }else{
+        console.log(chalk.red('Email required.'));
+        res.status(400).json({ success: false, message: 'Email required.' });
+      }
+      // transporter.sendMail({
+      //   from: 'fyp.social.id@gmail.com',
+      //   to: 'gambit1024@gmail.com',
+      //   subject: 'hello',
+      //   text: 'hello world!'
+      // });
+
+
+    });
+
+  // baseRouter.route('/email')
+  //   .post(function(req, res) {
+  //
+  //     var email = req.body.email;
+  //     console.log(chalk.yellow('Email: ' + email));
+  //
+  //     var isValid;
+  //
+  //     // emailExistence.check(email, function(err, res2){
+  //     //
+  //     //   if(err){
+  //     //     console.log(chalk.red('Error'));
+  //     //   }
+  //     //
+  //     //   isValid = res2;
+  //     //
+  //     //   console.log(chalk.yellow('Valid: ' + isValid));
+  //     //
+  //     //   res.json({
+  //     //     email : email,
+  //     //     valid : isValid
+  //     //   });
+  //     // });
+  //     //************************************
+  //     // verifier.verify(email, function( err, info ){
+  //     //   if( err ) {
+  //     //     console.log('Error: ' + err);
+  //     //     res.send(err);
+  //     //   }
+  //     //   else{
+  //     //     console.log( "Success (T/F): " + info.success );
+  //     //     console.log( "Info: " + info.info );
+  //     //     res.send(info.info);
+  //     //   }
+  //     // });
+  //
+  //     // res.send();
+  //     // res.cookie('name','shan').send("Hello");
+  // });
 
   // route to create a new user
   // Require - username, password
@@ -39,8 +131,9 @@ module.exports = function(app, express) {
 
               var newUser = new User();
 
-              newUser.user.local.username= username;
+              newUser.user.local.username = username;
               newUser.user.local.password = newUser.generateHash(password);
+              newUser.user.local.verified = false;
 
               console.log(chalk.yellow('Hashed Password: '+ newUser.user.local.password));
 
@@ -179,17 +272,13 @@ module.exports = function(app, express) {
         });
 
       }
-
-
-      next(); // make sure we go to the next routes and don't stop here
+      // next(); // make sure we go to the next routes and don't stop here
   });
 
 
   secureRouter.post('/',function(req,res){
     res.json({ message: 'Welcome to secure sID api !!!' });
   });
-
-
 
 
 
