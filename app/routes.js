@@ -191,131 +191,132 @@ module.exports = function(app, express) {
 
   // route to create a new user
   // Require - username, password
-  baseRouter.post('/setup', function(req, res) {
+  baseRouter.route('/setup')
+    .post(function(req, res) {
 
-    var username = req.body.username;
-    var password = req.body.password;
+      var username = req.body.username;
+      var password = req.body.password;
 
-    if(username){
-      console.log(chalk.yellow('Username: ' + username));
-      if(password){
-        console.log(chalk.yellow('Password: ' + password));
+      if(username){
+        console.log(chalk.yellow('Username: ' + username));
+        if(password){
+          console.log(chalk.yellow('Password: ' + password));
 
-        User.findOne({
-          'user.local.username': username
-        }, function(err, user) {
-          if(err){
-            console.log(chalk.red('Error'));
-            res.json({ success: false, message: 'Error' });
-          }else{
-            if(user){
-              console.log(chalk.red('User already exists'));
-              res.json({ success: false, message: 'User already exists' });
+          User.findOne({
+            'user.local.username': username
+          }, function(err, user) {
+            if(err){
+              console.log(chalk.red('Error'));
+              res.json({ success: false, message: 'Error' });
             }else{
+              if(user){
+                console.log(chalk.red('User already exists'));
+                res.json({ success: false, message: 'User already exists' });
+              }else{
 
-              var newUser = new User();
+                var newUser = new User();
 
-              newUser.user.local.username = username;
-              newUser.user.local.password = newUser.generateHash(password);
-              newUser.user.local.verified = false;
+                newUser.user.local.username = username;
+                newUser.user.local.password = newUser.generateHash(password);
+                newUser.user.local.verified = false;
 
-              console.log(chalk.yellow('Hashed Password: '+ newUser.user.local.password));
+                console.log(chalk.yellow('Hashed Password: '+ newUser.user.local.password));
 
-              // save the sample user
-              newUser.save(function(err) {
-                if (err) {
-                  console.log(chalk.red('Error'));
-                  res.json({ success: false, message: 'Error' });
-                }
-                console.log(chalk.green('User created'));
-                res.json({ success: true, message: 'User created' });
-              });
+                // save the sample user
+                newUser.save(function(err) {
+                  if (err) {
+                    console.log(chalk.red('Error'));
+                    res.json({ success: false, message: 'Error' });
+                  }
+                  console.log(chalk.green('User created'));
+                  res.json({ success: true, message: 'User created' });
+                });
+              }
             }
-          }
-        });
+          });
+        }else{
+          console.log(chalk.red('Authentication failed. Password required.'));
+          res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
+        }
       }else{
-        console.log(chalk.red('Authentication failed. Password required.'));
-        res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
+        console.log(chalk.red('Authentication failed. Username required.'));
+        res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
       }
-    }else{
-      console.log(chalk.red('Authentication failed. Username required.'));
-      res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
-    }
   });
 
 
   //Route to authenticate
-  baseRouter.post('/authenticate', function(req, res) {
+  baseRouter.route('/authenticate')
+    .post(function(req, res) {
 
-    var username = req.body.username;
-    var password = req.body.password;
+      var username = req.body.username;
+      var password = req.body.password;
 
-    if(username){
-      console.log(chalk.yellow('Username: ' + username));
-      // find the user
+      if(username){
+        console.log(chalk.yellow('Username: ' + username));
+        // find the user
 
-      if(password){
-        console.log(chalk.yellow('Password: ' + password));
+        if(password){
+          console.log(chalk.yellow('Password: ' + password));
 
-        User.findOne({
-          'user.local.username': username
-        }, function(err, user) {
+          User.findOne({
+            'user.local.username': username
+          }, function(err, user) {
 
-          if (err) throw err;
+            if (err) throw err;
 
-          if (!user) {
-            res.json({ success: false, message: 'Authentication failed. User not found.' });
-          } else if (user) {
+            if (!user) {
+              res.json({ success: false, message: 'Authentication failed. User not found.' });
+            } else if (user) {
 
-            console.log(chalk.blue('User: '+user));
+              console.log(chalk.blue('User: '+user));
 
-            var hash = user.generateHash(password);
-            console.log(chalk.green('Hash: ' + hash));
+              var hash = user.generateHash(password);
+              console.log(chalk.green('Hash: ' + hash));
 
-            // check if password matches
-            if (!user.validPassword(password)) {
-              res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-            } else {
+              // check if password matches
+              if (!user.validPassword(password)) {
+                res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+              } else {
 
-              console.log(chalk.green('Password correct'));
+                console.log(chalk.green('Password correct'));
 
-              var apiSecret = app.get('apiSecret');
+                var apiSecret = app.get('apiSecret');
 
-              console.log(chalk.yellow('apiSecret' + apiSecret ));
-              // if user is found and password is right
-              // create a token
+                console.log(chalk.yellow('apiSecret' + apiSecret ));
+                // if user is found and password is right
+                // create a token
 
-              var tempUser = {
-                iss: 'sID',
-                context:{
-                  username: user.user.local.username
-                }
-              };
+                var tempUser = {
+                  iss: 'sID',
+                  context:{
+                    username: user.user.local.username
+                  }
+                };
 
-              var token = jwt.sign(tempUser, apiSecret, {
-                expiresInMinutes: 1440 // expires in 24 hours
-              });
+                var token = jwt.sign(tempUser, apiSecret, {
+                  expiresInMinutes: 1440 // expires in 24 hours
+                });
 
-              // return the information including token as JSON
-              res.json({
-                success: true,
-                message: 'Enjoy your token!',
-                token: token
-              });
+                // return the information including token as JSON
+                res.json({
+                  success: true,
+                  message: 'Enjoy your token!',
+                  token: token
+                });
+              }
+
             }
 
-          }
+          });
+        }else{
+          console.log(chalk.red('Authentication failed. Password required.'));
+          res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
+        }
 
-        });
       }else{
-        console.log(chalk.red('Authentication failed. Password required.'));
-        res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
+        res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
       }
-
-    }else{
-      res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
-    }
-
   });
 
 
@@ -356,12 +357,12 @@ module.exports = function(app, express) {
         });
 
       }
-      // next(); // make sure we go to the next routes and don't stop here
   });
 
 
-  secureRouter.post('/',function(req,res){
-    res.json({ message: 'Welcome to secure sID api !!!' });
+  secureRouter.route('/')
+    .post(function(req,res){
+      res.json({ message: 'Welcome to secure sID api !!!' });
   });
 
 
