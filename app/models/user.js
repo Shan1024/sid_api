@@ -1,4 +1,5 @@
 // get an instance of mongoose and mongoose.Schema
+var chalk = require('chalk');
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
@@ -53,7 +54,8 @@ userSchema.methods.generateHash = function(password) {
 
 // checking if password is valid
 userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.local.password);
+		console.log(chalk.yellow('Checking passwords . . .: ' + password));
+    return bcrypt.compareSync(password, this.user.local.password);
 };
 
 // create the model for users and expose it to our app
