@@ -10,7 +10,7 @@ module.exports = function(app, express) {
   // middleware to use for all requests
   router.use(function(req, res, next) {
       // do logging
-      console.log('Something is happening.');
+      console.log(chalk.blue('API Call received.'));
       next(); // make sure we go to the next routes and don't stop here
   });
 
@@ -20,6 +20,8 @@ module.exports = function(app, express) {
       // res.cookie('name','shan').send("Hello");
   });
 
+  // route to create a new user
+  // Require - username, password
   router.post('/setup', function(req, res) {
 
     var username = req.body.username;
@@ -42,13 +44,15 @@ module.exports = function(app, express) {
               res.json({ success: false, message: 'User already exists' });
             }else{
 
-              var user = new User({
-                'user.local.username': username,
-                'user.local.password': password,
-              });
+              var newUser = new User();
+
+              newUser.user.local.username= username;
+              newUser.user.local.password = newUser.generateHash(password);
+
+              console.log(chalk.yellow('Hashed Password: '+ newUser.user.local.password));
 
               // save the sample user
-              user.save(function(err) {
+              newUser.save(function(err) {
                 if (err) {
                   console.log(chalk.red('Error'));
                   res.json({ success: false, message: 'Error' });
@@ -68,6 +72,44 @@ module.exports = function(app, express) {
       res.json({ success: false, message: 'Authentication failed. Username required.' });
     }
   });
+
+  //Route to authenticate
+  // router.post('/authenticate', function(req, res) {
+  //
+  //   // find the user
+  //   User.findOne({
+  //     name: req.body.name
+  //   }, function(err, user) {
+  //
+  //     if (err) throw err;
+  //
+  //     if (!user) {
+  //       res.json({ success: false, message: 'Authentication failed. User not found.' });
+  //     } else if (user) {
+  //
+  //       // check if password matches
+  //       if (user.password != req.body.password) {
+  //         res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+  //       } else {
+  //
+  //         // if user is found and password is right
+  //         // create a token
+  //         var token = jwt.sign(user, app.get('superSecret'), {
+  //           expiresInMinutes: 1440 // expires in 24 hours
+  //         });
+  //
+  //         // return the information including token as JSON
+  //         res.json({
+  //           success: true,
+  //           message: 'Enjoy your token!',
+  //           token: token
+  //         });
+  //       }
+  //
+  //     }
+  //
+  //   });
+  // });
 
 
   // // on routes that end in /bears
