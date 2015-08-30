@@ -4,26 +4,18 @@ var User  = require('./models/user'); // get our mongoose model
 
 module.exports = function(app, express) {
 
-  // ROUTES FOR OUR API
-  // =============================================================================
-  var router = express.Router();// get an instance of the express Router
-
-  // middleware to use for all requests
-  router.use(function(req, res, next) {
-      // do logging
-      console.log(chalk.blue('API Call received.'));
-      next(); // make sure we go to the next routes and don't stop here
-  });
+  var baseRouter = express.Router();
 
   // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-  router.get('/', function(req, res) {
-      res.json({ message: 'Welcome to sID api !!!' });
+  baseRouter.get('/', function(req, res) {
+      res.json({ message: 'Welcome to sID !!!' });
       // res.cookie('name','shan').send("Hello");
   });
 
+
   // route to create a new user
   // Require - username, password
-  router.post('/setup', function(req, res) {
+  baseRouter.post('/setup', function(req, res) {
 
     var username = req.body.username;
     var password = req.body.password;
@@ -66,16 +58,17 @@ module.exports = function(app, express) {
         });
       }else{
         console.log(chalk.red('Authentication failed. Password required.'));
-        res.json({ success: false, message: 'Authentication failed. Password required.' });
+        res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
       }
     }else{
       console.log(chalk.red('Authentication failed. Username required.'));
-      res.json({ success: false, message: 'Authentication failed. Username required.' });
+      res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
     }
   });
 
+
   //Route to authenticate
-  router.post('/authenticate', function(req, res) {
+  baseRouter.post('/authenticate', function(req, res) {
 
     var username = req.body.username;
     var password = req.body.password;
@@ -139,19 +132,70 @@ module.exports = function(app, express) {
         });
       }else{
         console.log(chalk.red('Authentication failed. Password required.'));
-        res.json({ success: false, message: 'Authentication failed. Password required.' });
+        res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
       }
 
     }else{
-      res.json({ success: false, message: 'Authentication failed. Username required.' });
+      res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
     }
 
   });
 
 
+  // ROUTES FOR OUR API
+  // =============================================================================
+  var secureRouter = express.Router();// get an instance of the express Router
+
+  // middleware to use for all requests
+  secureRouter.use(function(req, res, next) {
+      // do logging
+
+      console.log(chalk.blue('Request received to secure api.'));
+
+      // check header or url parameters or post parameters for token
+      var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+      // decode token
+      if (token) {
+
+        // verifies secret and checks exp
+        jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
+          if (err) {
+            return res.json({ success: false, message: 'Failed to authenticate token.' });
+          } else {
+            // if everything is good, save to request for use in other routes
+            req.decoded = decoded;
+            next();
+          }
+        });
+
+      } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+      }
+
+
+      next(); // make sure we go to the next routes and don't stop here
+  });
+
+
+  secureRouter.post('/',function(req,res){
+    res.json({ message: 'Welcome to secure sID api !!!' });
+  });
+
+
+
+
+
   // // on routes that end in /bears
   // // ----------------------------------------------------
-  router.route('/users/facebook')
+  secureRouter.route('/users/facebook')
   //
   //     // create a bear (accessed at POST http://localhost:8080/api/bears)
   //     .post(function(req, res) {
@@ -182,7 +226,7 @@ module.exports = function(app, express) {
   //
   //         // on routes that end in /bears/:bear_id
   //         // ----------------------------------------------------
-  router.route('/users/facebook/:user_id')
+  secureRouter.route('/users/facebook/:user_id')
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
@@ -230,8 +274,9 @@ module.exports = function(app, express) {
 
 
   // more routes for our API will happen here
+  app.use('/', baseRouter);
 
   // REGISTER OUR ROUTES -------------------------------
   // all of our routes will be prefixed with /api
-  app.use('/api', router);
+  app.use('/api', secureRouter);
 }
