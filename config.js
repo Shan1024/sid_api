@@ -9,5 +9,8 @@ module.exports = {
     'httpPort': '9090',
     'httpsPort': '443',
 
-    'host': 'https://localhost'
+    'host': 'http://id.projects.mrt.ac.lk:9090',
+
+    'username': 'un',
+    'password': 'pw'
 };
