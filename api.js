@@ -27,6 +27,8 @@ mongoose.connect(config.database); // connect to database
 
 app.set('apiSecret', config.apiSecret); // secret variable
 app.set('host', config.host);
+app.set('username', config.username);
+app.set('password', config.password);
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
