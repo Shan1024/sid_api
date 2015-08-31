@@ -12,8 +12,8 @@ module.exports = function(app, express) {
   var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-          user: "fyp.social.id@gmail.com",
-          pass: "sid@uomfyp"
+          user: app.get('username'),
+          pass: app.get('password')
       }
   });
 
@@ -52,8 +52,7 @@ module.exports = function(app, express) {
             subject: 'sID Account Verification', // Subject line
             // text: 'Hello world', // plaintext body
             // html body
-            html: 'Your account has been created. Please click the following link to verify the account<br><br>'
-            +host+'/verify?token='+token
+            html: 'Your account has been created. Please click the following link to verify the account<br><br>' + host + '/verify?token=' + token
         };
 
         // send mail with defined transport object
@@ -111,7 +110,7 @@ module.exports = function(app, express) {
 
                 if(user){
 
-                  if(user.user.local.verified==true){
+                  if(user.user.local.verified === true){
                     res.json({ success: false, message: username+' already verified'});
                     console.log(chalk.red(username+' already verified'));
                   }else{
@@ -410,7 +409,7 @@ module.exports = function(app, express) {
           res.send(err);
         res.json(user);
       });
-    })
+    });
 
     // // update the bear with this id (accessed at PUT http://localhost:8080/api/bears/:bear_id)
     //   .put(function(req, res) {
@@ -453,4 +452,4 @@ module.exports = function(app, express) {
 
   // all of our routes will be prefixed with /api
   app.use('/api', secureRouter);
-}
+};
