@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     jshint: {
-      all: ['Gruntfile.js', 'api.js', 'config.js', 'app/routes.js', 'app/models/user.js']
+      all: ['*.js', 'app/routes.js', 'app/models/user.js', 'test/apiTest.js']
     }
   });
 
