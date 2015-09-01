@@ -339,8 +339,8 @@ module.exports = function(app, express) {
         // verifies secret and checks exp
         jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
           if (err) {
-            fs.readFile('public/index.html', function (err, html) {
-              res.writeHeader(403, {"Content-Type": "text/html"});
+            fs.readFile('public/api/index.html', function (err, html) {
+              res.writeHeader(200, {"Content-Type": "text/html"});
               res.write(html);
               res.end();
             });
@@ -360,8 +360,8 @@ module.exports = function(app, express) {
         //     success: false,
         //     message: 'No token provided.'
         // });
-        fs.readFile('public/index.html', function (err, html) {
-          res.writeHeader(403, {"Content-Type": "text/html"});
+        fs.readFile('public/api/index.html', function (err, html) {
+          res.writeHeader(200, {"Content-Type": "text/html"});
           res.write(html);
           res.end();
         });
