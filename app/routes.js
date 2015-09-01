@@ -339,12 +339,12 @@ module.exports = function(app, express) {
         // verifies secret and checks exp
         jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
           if (err) {
-              fs.readFile('public/index.html', function (err, html) {
-                res.writeHeader(200, {"Content-Type": "text/html"});
-                res.write(html);
-                res.end();
-              });
-            return res.json({ success: false, message: 'Failed to authenticate token.' });
+            fs.readFile('public/index.html', function (err, html) {
+              res.writeHeader(403, {"Content-Type": "text/html"});
+              res.write(html);
+              res.end();
+            });
+            // return res.json({ success: false, message: 'Failed to authenticate token.' });
           } else {
             // if everything is good, save to request for use in other routes
             req.decoded = decoded;
@@ -361,7 +361,7 @@ module.exports = function(app, express) {
         //     message: 'No token provided.'
         // });
         fs.readFile('public/index.html', function (err, html) {
-          res.writeHeader(200, {"Content-Type": "text/html"});
+          res.writeHeader(403, {"Content-Type": "text/html"});
           res.write(html);
           res.end();
         });
