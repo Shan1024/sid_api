@@ -1,6 +1,7 @@
 {
-  "name": "restful",
-  "main": "server.js",
+  "name": "sid_api",
+  "version": "0.0.1",
+  "main": "api.js",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "latest",
@@ -24,5 +25,8 @@
   },
   "scripts": {
     "test": "grunt --verbose"
+  },
+  "devDependencies": {
+    "grunt-mocha-test": "^0.12.7"
   }
 }
