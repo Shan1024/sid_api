@@ -2,6 +2,7 @@ var chalk = require('chalk');
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var User  = require('./models/user'); // get our mongoose model
 var nodemailer = require("nodemailer");
+var fs = require('fs');
 
 module.exports = function(app, express) {
 
@@ -47,7 +48,7 @@ module.exports = function(app, express) {
         var host = app.get('host');
 
         var mailOptions = {
-            from: 'sID <fyp.social.id@gmail.com>', // sender address
+            from: 'sID <'+app.get('username')+'>', // sender address
             to: email, // list of receivers
             subject: 'sID Account Verification', // Subject line
             // text: 'Hello world', // plaintext body
@@ -59,16 +60,16 @@ module.exports = function(app, express) {
         transporter.sendMail(mailOptions, function(error, info){
             if(error){
                 console.log(chalk.red(error));
-                res.status(404).json({message: error});
+                res.json({message: error});
             }else{
               console.log(chalk.yellow('Email sent: ' + info.response));
-              res.status(404).json({message: 'Email sent successfully'});
+              res.json({message: 'Email sent successfully'});
             }
         });
 
       }else{
         console.log(chalk.red('Email required.'));
-        res.status(400).json({ success: false, message: 'Email required.' });
+        res.json({ success: false, message: 'Email required.' });
       }
       // transporter.sendMail({
       //   from: 'fyp.social.id@gmail.com',
@@ -199,7 +200,7 @@ module.exports = function(app, express) {
       if(username){
         console.log(chalk.yellow('Username: ' + username));
         if(password){
-          console.log(chalk.yellow('Password: ' + password));
+          console.log(chalk.yellow('Password: [password omitted]'));
 
           User.findOne({
             'user.local.username': username
@@ -228,7 +229,7 @@ module.exports = function(app, express) {
                     res.json({ success: false, message: 'Error' });
                   }
                   console.log(chalk.green('User created'));
-                  res.json({ success: true, message: 'User created' });
+                  res.status(201).json({ success: true, message: 'User created' });
                 });
               }
             }
@@ -338,6 +339,11 @@ module.exports = function(app, express) {
         // verifies secret and checks exp
         jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
           if (err) {
+              fs.readFile('public/index.html', function (err, html) {
+                res.writeHeader(200, {"Content-Type": "text/html"});
+                res.write(html);
+                res.end();
+              });
             return res.json({ success: false, message: 'Failed to authenticate token.' });
           } else {
             // if everything is good, save to request for use in other routes
@@ -350,11 +356,15 @@ module.exports = function(app, express) {
 
         // if there is no token
         // return an error
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
+        // return res.status(403).send({
+        //     success: false,
+        //     message: 'No token provided.'
+        // });
+        fs.readFile('public/index.html', function (err, html) {
+          res.writeHeader(200, {"Content-Type": "text/html"});
+          res.write(html);
+          res.end();
         });
-
       }
   });
 
