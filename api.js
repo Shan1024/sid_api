@@ -20,7 +20,7 @@ var session       = require('express-session');
 
 
 var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config      = require('./config'); // get our config file
+var config      = require('./config/config'); // get our config file
 
 // This line is from the Node.js HTTPS documentation.
 var options = {
@@ -51,7 +51,7 @@ app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
 
 // required for passport
-app.use(session({  })); // session secret
+app.use(session({ secret: config.sessionSecret})); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
