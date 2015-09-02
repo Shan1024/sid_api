@@ -3,6 +3,9 @@ var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var User  = require('./models/user'); // get our mongoose model
 var nodemailer = require("nodemailer");
 var fs = require('fs');
+var passport    = require('passport');
+var facebook = require('../socialconfig/facebook.js');
+var linkedin = require('../socialconfig/linkedin.js');
 
 module.exports = function(app, express) {
 
@@ -319,6 +322,78 @@ module.exports = function(app, express) {
       }
   });
 
+baseRouter.get('/success', isLoggedIn, function(req, res){
+  res.json(req.user);
+});
+
+baseRouter.get('/failure', function(req, res){
+  res.json({success: 'false'});
+});
+
+// process the login form
+baseRouter.post('/login', passport.authenticate('local-login', {
+    successRedirect : '/success', // redirect to the secure profile section
+    failureRedirect : '/failure', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
+
+// facebook -------------------------------
+
+// send to facebook to do the authentication
+baseRouter.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email, user_friends' }));
+
+// handle the callback after facebook has authenticated the user
+baseRouter.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect : '/success',
+        failureRedirect : '/failure'
+    }));
+
+
+baseRouter.get('/auth/linkedin', passport.authenticate('linkedin'));
+
+baseRouter.get('/auth/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: '/failure' }),
+        function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/success');
+    });
+
+    // =============================================================================
+    // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
+    // =============================================================================
+
+    // locally --------------------------------
+app.get('/connect/local', function(req, res) {
+    res.render('connect-local.ejs', { message: req.flash('loginMessage') });
+});
+app.post('/connect/local', passport.authenticate('local-signup', {
+    successRedirect : '/success', // redirect to the secure profile section
+    failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
+
+    // facebook -------------------------------
+
+    // send to facebook to do the authentication
+app.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
+
+// handle the callback after facebook has authorized the user
+app.get('/connect/facebook/callback',
+  passport.authorize('facebook', {
+    successRedirect : '/success',
+    failureRedirect : '/failure'
+}));
+
+app.get('/connect/linkedin', passport.authorize('linkedin', { res : ['r_basicprofile', 'r_fullprofile', 'r_emailaddress'] }));
+
+// the callback after google has authorized the user
+app.get('/connect/linkedin/callback',
+  passport.authorize('linkedin', {
+    successRedirect : '/success',
+    failureRedirect : '/failure'
+}));
+
 
   // ROUTES FOR OUR API
   // =============================================================================
@@ -462,6 +537,14 @@ module.exports = function(app, express) {
     //          res.json({ message: 'Successfully deleted' });
     //      });
     //  });
+
+    // route middleware to ensure user is logged in
+    function isLoggedIn(req, res, next) {
+        if (req.isAuthenticated())
+            return next();
+
+        res.redirect('/');
+    }
 
   // REGISTER OUR ROUTES -------------------------------
 
