@@ -4,19 +4,19 @@
 // =============================================================================
 
 // call the packages we need
-var express     = require('express');        // call express
-var app         = express();                 // define our app using express
-var bodyParser  = require('body-parser');
-var https       = require('https');
-var http        = require('http');
-var fs          = require('fs');
-var morgan      = require('morgan');
-var mongoose    = require('mongoose');
-var chalk       = require('chalk');
-var cookieParser = require('cookie-parser');
-var passport = require('passport');
-var flash    = require('connect-flash');
-var session      = require('express-session');
+var express       = require('express');        // call express
+var app           = express();                 // define our app using express
+var bodyParser    = require('body-parser');
+var https         = require('https');
+var http          = require('http');
+var fs            = require('fs');
+var morgan        = require('morgan');
+var mongoose      = require('mongoose');
+var chalk         = require('chalk');
+var cookieParser  = require('cookie-parser');
+var passport      = require('passport');
+var flash         = require('connect-flash');
+var session       = require('express-session');
 
 
 var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -51,7 +51,7 @@ app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
 
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+app.use(session({  })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
