@@ -43,9 +43,9 @@ exports.getLinkedInData = function(apiPath, callback) {
 
     request.end();
     */
-}
+};
 
 
 exports.setLinkedInToken = function(token){
   linkedin_oauth2_access_token = token;
-}
+};

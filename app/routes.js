@@ -453,7 +453,7 @@ app.get('/connect/linkedin/callback',
 
   // // on routes that end in /bears
   // // ----------------------------------------------------
-  secureRouter.route('/users/facebook')
+  // secureRouter.route('/users/facebook')
   //
   //     // create a bear (accessed at POST http://localhost:8080/api/bears)
   //     .post(function(req, res) {
@@ -473,26 +473,34 @@ app.get('/connect/linkedin/callback',
   //
   //     })
   //
-      // get all the users (accessed at GET http://localhost:8080/api/users)
-          .get(function(req, res) {
-              User.find(function(err, user) {
-                  if (err)
-                      res.send(err);
-                  res.json(user);
-              });
-          });
-  //
+  //     // get all the users (accessed at GET http://localhost:8080/api/users)
+  //         .get(function(req, res) {
+  //             User.find(function(err, user) {
+  //                 if (err)
+  //                     res.send(err);
+  //                 res.json(user);
+  //             });
+  //         });
+  // //
   //         // on routes that end in /bears/:bear_id
   //         // ----------------------------------------------------
-  secureRouter.route('/users/facebook/:user_id')
+  secureRouter.route('/users/facebook')
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
-    .get(function(req, res) {
-      console.log('User ID: ' + req.params.user_id);
-      User.findOne({'facebook.id': req.params.user_id}, function(err, user) {
-        if (err)
-          res.send(err);
-        res.json(user);
+    .post(function(req, res) {
+      var user_id=req.body.user_id;
+      console.log('User ID: ' + user_id);
+      User.findOne({'user.facebook.id': user_id}, function(err, user) {
+        if (err){
+          res.json({message:"Error:"+err});
+        }else{
+          if(user){
+            res.json({message:"User is in the databse"});
+          }else{
+            res.json({message:"User not found"});
+          }
+
+        }
       });
     });
 
