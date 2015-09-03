@@ -1,0 +1,7 @@
+{
+  "name": "sID API",
+  "version": "0.1.0",
+  "description": "sID API for the sID System",
+  "title": "Custom apiDoc browser title",
+  "url" : "http://id.projects.mrt.ac.lk:9090/api"
+}

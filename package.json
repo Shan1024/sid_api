@@ -38,6 +38,7 @@
     "test": "grunt --verbose"
   },
   "devDependencies": {
-    "grunt-mocha-test": "^0.12.7"
+    "grunt-apidoc": "latest",
+    "grunt-mocha-test": "latest"
   }
 }
