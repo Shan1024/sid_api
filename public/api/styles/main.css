@@ -294,7 +294,7 @@ body {
   }
 }
 .glitch:before {
-  content: "\00a0\00a0\00a0 404 \00a0\00a0\00a0";
+  content: "\00a0\00a0\00a0 403 \00a0\00a0\00a0";
   position: absolute;
   left: -2px;
   text-shadow: 1px 0 blue;
