@@ -247,6 +247,18 @@ module.exports = function(app, express) {
       }
   });
 
+  /*DUMMY FUNCTION TO GET RATING SPECIFIC TO A CLAIM*/
+  baseRouter.route('/claimRating')
+	.post(function(req,res){
+		console.log("get Rating api call received by DUMMY METHOD");
+		console.log(req.body.sender);
+		console.log(req.body.target);
+		console.log(req.body.cClass);
+		console.log(req.body.claimId);
+		
+		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
+	
+	});
 
   //Route to authenticate
   baseRouter.route('/authenticate')
