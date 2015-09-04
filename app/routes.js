@@ -1,13 +1,14 @@
-var chalk = require('chalk');
-var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var User  = require('./models/user'); // get our mongoose model
-var nodemailer = require("nodemailer");
-var fs = require('fs');
+var chalk       = require('chalk');
+var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var User        = require('./models/user'); // get our mongoose model
+var nodemailer  = require("nodemailer");
+var fs          = require('fs');
 var passport    = require('passport');
-var facebook = require('../socialconfig/facebook.js');
-var linkedin = require('../socialconfig/linkedin.js');
+var facebook    = require('../socialconfig/facebook.js');
+var linkedin    = require('../socialconfig/linkedin.js');
 
-module.exports = function(app, express) {
+
+module.exports  = function(app, express) {
 
   /*
       Here we are configuring our SMTP Server details.
@@ -21,8 +22,98 @@ module.exports = function(app, express) {
       }
   });
 
+
+  /**
+   * @apiDefine UserNotFoundError
+   *
+   * @apiError UserNotFound The id of the User was not found.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 404 Not Found
+   *     {
+   *       "error": "UserNotFound"
+   *     }
+   */
+
+  /**
+   * @api {get} /user/:id Request User information
+   * @apiName GetUser
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Users unique ID.
+   *
+   * @apiSuccess {String} firstname Firstname of the User.
+   * @apiSuccess {String} lastname  Lastname of the User.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "firstname": "John",
+   *       "lastname": "Doe"
+   *     }
+   *
+   * @apiUse UserNotFoundError
+   */
+
+  /**
+   * @api {put} /user/ Modify User information
+   * @apiName PutUser
+   * @apiGroup User
+   *
+   * @apiParam {Number} id          Users unique ID.
+   * @apiParam {String} [firstname] Firstname of the User.
+   * @apiParam {String} [lastname]  Lastname of the User.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *
+   * @apiUse UserNotFoundError
+   */
+
+
+
+
+
+
+   /**
+    * @api {post} /user Update User information
+    * @apiName PostUser
+    * @apiGroup User
+    *
+    * @apiParam {Number} id Users unique ID.
+    *
+    * @apiSuccess {String} firstname Firstname of the User.
+    * @apiSuccess {String} lastname  Lastname of the User.
+    */
+
+    /**
+     * @api {get} /facebook Ger Facebook User information
+     * @apiName PostFacebook
+     * @apiGroup Facebook
+     *
+     * @apiParam {Number} id Users unique ID.
+     *
+     * @apiPermission Token
+     * @apiSuccess {String} firstname Firstname of the User.
+     * @apiSuccess {String} lastname  Lastname of the User.
+     */
+     
+
+
   var baseRouter = express.Router();
 
+  /**
+    * My method description.  Like other pieces of your comment blocks,
+    * this can span multiple lines.
+    *
+    * @method methodName
+    * @param {String} foo Argument 1
+    * @param {Object} config A config object
+    * @param {String} config.name The name on the config object
+    * @param {Function} config.callback A callback function on the config object
+    * @param {Boolean} [extra=false] Do extra, optional work
+    * @return {Boolean} Returns true on success
+    */
   // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
   baseRouter.get('/', function(req, res) {
       res.json({ message: 'Welcome to sID !!!' });
@@ -426,8 +517,8 @@ app.get('/connect/linkedin/callback',
         // verifies secret and checks exp
         jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
           if (err) {
-            fs.readFile('public/api/index.html', function (err, html) {
-              res.writeHeader(200, {"Content-Type": "text/html"});
+            fs.readFile('index.html', function (err, html) {
+              res.writeHeader(403, {"Content-Type": "text/html"});
               res.write(html);
               res.end();
             });
@@ -447,8 +538,8 @@ app.get('/connect/linkedin/callback',
         //     success: false,
         //     message: 'No token provided.'
         // });
-        fs.readFile('public/api/index.html', function (err, html) {
-          res.writeHeader(200, {"Content-Type": "text/html"});
+        fs.readFile('index.html', function (err, html) {
+          res.writeHeader(403, {"Content-Type": "text/html"});
           res.write(html);
           res.end();
         });
