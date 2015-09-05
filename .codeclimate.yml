@@ -44,6 +44,6 @@ ratings:
 # exclude_paths key.
 
 exclude_paths:
-- public/apidoc/**/*
+- public/**/*
 #- spec/**/*
 #- vendor/**/*
