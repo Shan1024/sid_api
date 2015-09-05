@@ -414,13 +414,13 @@ module.exports  = function(app, express) {
 	.post(function(req,res){
 		console.log("get overall Rating api call received by DUMMY METHOD");
 		console.log(req.body.targetUser);
-		
+		var targetUser = req.body.targetUser;
 		var rate;
 		
 		targetUser = targetUser%3;
-		if(targetUser == 1){
+		if(targetUser === 1){
 			rate = "T";	//True		Green
-		}else if(targetUser == 2){
+		}else if(targetUser === 2){
 			rate = "R"	//Reject	Red
 		}else{
 			rate = "C"	//Uncertain Yellow
