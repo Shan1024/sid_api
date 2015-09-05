@@ -44,6 +44,6 @@ engines:
 # exclude_paths key.
 
 exclude_paths:
-  public/apidoc/**/*
+- public/apidoc/**/*
 #- spec/**/*
 #- vendor/**/*
