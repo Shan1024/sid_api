@@ -28,15 +28,37 @@ var userSchema = mongoose.Schema({
 			ratedByMe:[
 				{
 					id: String,
-					content: String,
-					rating: String
+					entry: {
+						basic_info:[
+							{
+								data: String,
+								rating: Number
+							}
+						],
+						work_edu:[
+							{
+								data: String,
+								rating: Number
+							}
+						],
+						places_lived:[
+							{
+								data: String,
+								rating: Number
+							}
+						],
+						life_events:[
+							{
+								data: String,
+								rating: Number
+							}
+						]
+					}
 				}
 			],
-			myRatings:[
+			ratedByOthers:[
 				{
-					id: String,
-					content: String,
-					rating: String
+					id: String
 				}
 			]
 		},

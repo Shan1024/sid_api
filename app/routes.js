@@ -1,13 +1,14 @@
-var chalk = require('chalk');
-var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var User  = require('./models/user'); // get our mongoose model
-var nodemailer = require("nodemailer");
-var fs = require('fs');
+var chalk       = require('chalk');
+var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var User        = require('./models/user'); // get our mongoose model
+var nodemailer  = require("nodemailer");
+var fs          = require('fs');
 var passport    = require('passport');
-var facebook = require('../socialconfig/facebook.js');
-var linkedin = require('../socialconfig/linkedin.js');
+var facebook    = require('../socialconfig/facebook.js');
+var linkedin    = require('../socialconfig/linkedin.js');
 
-module.exports = function(app, express) {
+
+module.exports  = function(app, express) {
 
   /*
       Here we are configuring our SMTP Server details.
@@ -21,13 +22,126 @@ module.exports = function(app, express) {
       }
   });
 
+
+  /*
+   * @apiDefine UserNotFoundError
+   *
+   * @apiError UserNotFound The id of the User was not found.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 404 Not Found
+   *     {
+   *       "error": "UserNotFound"
+   *     }
+   */
+
+  /*
+   * @api {get} /user/:id Request User information
+   * @apiName GetUser
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Users unique ID.
+   *
+   * @apiSuccess {String} firstname Firstname of the User.
+   * @apiSuccess {String} lastname  Lastname of the User.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "firstname": "John",
+   *       "lastname": "Doe"
+   *     }
+   *
+   * @apiUse UserNotFoundError
+   */
+
+  /*
+   * @api {put} /user/ Modify User information
+   * @apiName PutUser
+   * @apiGroup User
+   *
+   * @apiParam {Number} id          Users unique ID.
+   * @apiParam {String} [firstname] Firstname of the User.
+   * @apiParam {String} [lastname]  Lastname of the User.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *
+   * @apiUse UserNotFoundError
+   */
+
+
+
+
+
+
+   /*
+    * @api {post} /user Update User information
+    * @apiName PostUser
+    * @apiGroup User
+    *
+    * @apiParam {Number} id Users unique ID.
+    *
+    * @apiSuccess {String} firstname Firstname of the User.
+    * @apiSuccess {String} lastname  Lastname of the User.
+    */
+
+    /**
+     * @api {get} /facebook Ger Facebook User information
+     * @apiName PostFacebook
+     * @apiGroup Facebook
+     *
+     * @apiParam {Number} id Users unique ID.
+     *
+     * @apiPermission Token
+     * @apiSuccess {String} firstname Firstname of the User.
+     * @apiSuccess {String} lastname  Lastname of the User.
+     */
+
+
+
   var baseRouter = express.Router();
 
-  // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+
+  /**
+   * @api {get} / Test the api connection
+   * @apiName TestConnection
+   * @apiGroup Base Router
+   *
+   * @apiSuccess {String} message Welcome to sID !!!
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "message": "Welcome to sID !!!"
+   *     }
+   */
   baseRouter.get('/', function(req, res) {
       res.json({ message: 'Welcome to sID !!!' });
       // res.cookie('name','shan').send("Hello");
   });
+
+  /**
+   * @api {post} /sendMail Send verification Email
+   * @apiName /sendEmail
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} email Users email address.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "Email sent successfully"
+   *     }
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": false,
+   *       "message": "Email required."
+   *     }
+   */
 
   baseRouter.route('/sendEmail')
     .post(function(req,res){
@@ -66,7 +180,7 @@ module.exports = function(app, express) {
                 res.json({message: error});
             }else{
               console.log(chalk.yellow('Email sent: ' + info.response));
-              res.json({message: 'Email sent successfully'});
+              res.json({success: true, message: 'Email sent successfully'});
             }
         });
 
@@ -83,6 +197,23 @@ module.exports = function(app, express) {
 
 
     });
+
+
+    /**
+     * @api {get} /verify Verify an email address
+     * @apiName /verify
+     * @apiGroup Base Router
+     *
+     * @apiParam {String} token Token containing user information.
+     *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": true,
+     *       "message": "{username} verified"
+     *     }
+     *
+     */
 
     baseRouter.route('/verify')
       .get(function(req,res){
@@ -194,6 +325,24 @@ module.exports = function(app, express) {
 
   // route to create a new user
   // Require - username, password
+
+
+  /**
+   * @api {post} /setup Create a new user account
+   * @apiName /setup
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} username Users email address.
+   * @apiParam {String} password Users password.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "User created"
+   *     }
+   *
+   */
   baseRouter.route('/setup')
     .post(function(req, res) {
 
@@ -232,7 +381,7 @@ module.exports = function(app, express) {
                     res.json({ success: false, message: 'Error' });
                   }
                   console.log(chalk.green('User created'));
-                  res.status(201).json({ success: true, message: 'User created' });
+                  res.status(200).json({ success: true, message: 'User created' });
                 });
               }
             }
@@ -255,9 +404,9 @@ module.exports = function(app, express) {
 		console.log(req.body.target);
 		console.log(req.body.cClass);
 		console.log(req.body.claimId);
-		
+
 		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
-	
+
 	});
 	
   /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
@@ -283,7 +432,22 @@ module.exports = function(app, express) {
 	
 	
 
-  //Route to authenticate
+  /**
+   * @api {post} /authenticate Authenticate an user
+   * @apiName /authenticate
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} username Users email address.
+   * @apiParam {String} password Users password.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "token": "{TOKEN}"
+   *     }
+   *
+   */
   baseRouter.route('/authenticate')
     .post(function(req, res) {
 
@@ -339,7 +503,6 @@ module.exports = function(app, express) {
                 // return the information including token as JSON
                 res.json({
                   success: true,
-                  message: 'Enjoy your token!',
                   token: token
                 });
               }
@@ -449,8 +612,8 @@ app.get('/connect/linkedin/callback',
         // verifies secret and checks exp
         jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
           if (err) {
-            fs.readFile('public/api/index.html', function (err, html) {
-              res.writeHeader(200, {"Content-Type": "text/html"});
+            fs.readFile('index.html', function (err, html) {
+              res.writeHeader(403, {"Content-Type": "text/html"});
               res.write(html);
               res.end();
             });
@@ -470,18 +633,32 @@ app.get('/connect/linkedin/callback',
         //     success: false,
         //     message: 'No token provided.'
         // });
-        fs.readFile('public/api/index.html', function (err, html) {
-          res.writeHeader(200, {"Content-Type": "text/html"});
+        fs.readFile('index.html', function (err, html) {
+          res.writeHeader(403, {"Content-Type": "text/html"});
           res.write(html);
           res.end();
         });
       }
   });
 
-
+  /**
+   * @api {post} /api/ Test the secure api connection
+   * @apiName /api
+   * @apiGroup Secure Router
+   *
+   * @apiParam {String} token Token to authenticate the user.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "Welcome to secure sID api !!!"
+   *     }
+   *
+   */
   secureRouter.route('/')
     .post(function(req,res){
-      res.json({ message: 'Welcome to secure sID api !!!' });
+      res.json({ success: true, message: 'Welcome to secure sID api !!!' });
   });
 
 
