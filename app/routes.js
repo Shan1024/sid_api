@@ -408,6 +408,29 @@ module.exports  = function(app, express) {
 		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
 
 	});
+	
+  /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
+  baseRouter.route('/profRating')
+	.post(function(req,res){
+		console.log("get overall Rating api call received by DUMMY METHOD");
+		console.log(req.body.targetUser);
+		
+		var rate;
+		
+		targetUser = targetUser%3;
+		if(targetUser == 1){
+			rate = "T";	//True		Green
+		}else if(targetUser == 2){
+			rate = "R"	//Reject	Red
+		}else{
+			rate = "C"	//Uncertain Yellow
+		}
+		
+		res.status(200).json({ rating:rate });
+	
+	});
+	
+	
 
   /**
    * @api {post} /authenticate Authenticate an user
