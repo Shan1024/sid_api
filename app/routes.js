@@ -23,7 +23,7 @@ module.exports  = function(app, express) {
   });
 
 
-  /**
+  /*
    * @apiDefine UserNotFoundError
    *
    * @apiError UserNotFound The id of the User was not found.
@@ -35,7 +35,7 @@ module.exports  = function(app, express) {
    *     }
    */
 
-  /**
+  /*
    * @api {get} /user/:id Request User information
    * @apiName GetUser
    * @apiGroup User
@@ -55,7 +55,7 @@ module.exports  = function(app, express) {
    * @apiUse UserNotFoundError
    */
 
-  /**
+  /*
    * @api {put} /user/ Modify User information
    * @apiName PutUser
    * @apiGroup User
@@ -75,7 +75,7 @@ module.exports  = function(app, express) {
 
 
 
-   /**
+   /*
     * @api {post} /user Update User information
     * @apiName PostUser
     * @apiGroup User
@@ -97,28 +97,51 @@ module.exports  = function(app, express) {
      * @apiSuccess {String} firstname Firstname of the User.
      * @apiSuccess {String} lastname  Lastname of the User.
      */
-     
+
 
 
   var baseRouter = express.Router();
 
+
   /**
-    * My method description.  Like other pieces of your comment blocks,
-    * this can span multiple lines.
-    *
-    * @method methodName
-    * @param {String} foo Argument 1
-    * @param {Object} config A config object
-    * @param {String} config.name The name on the config object
-    * @param {Function} config.callback A callback function on the config object
-    * @param {Boolean} [extra=false] Do extra, optional work
-    * @return {Boolean} Returns true on success
-    */
-  // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+   * @api {get} / Test the api connection
+   * @apiName TestConnection
+   * @apiGroup Base Router
+   *
+   * @apiSuccess {String} message Welcome to sID !!!
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "message": "Welcome to sID !!!"
+   *     }
+   */
   baseRouter.get('/', function(req, res) {
       res.json({ message: 'Welcome to sID !!!' });
       // res.cookie('name','shan').send("Hello");
   });
+
+  /**
+   * @api {post} /sendMail Send verification Email
+   * @apiName /sendEmail
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} email Users email address.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "Email sent successfully"
+   *     }
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": false,
+   *       "message": "Email required."
+   *     }
+   */
 
   baseRouter.route('/sendEmail')
     .post(function(req,res){
@@ -157,7 +180,7 @@ module.exports  = function(app, express) {
                 res.json({message: error});
             }else{
               console.log(chalk.yellow('Email sent: ' + info.response));
-              res.json({message: 'Email sent successfully'});
+              res.json({success: true, message: 'Email sent successfully'});
             }
         });
 
@@ -174,6 +197,23 @@ module.exports  = function(app, express) {
 
 
     });
+
+
+    /**
+     * @api {get} /verify Verify an email address
+     * @apiName /verify
+     * @apiGroup Base Router
+     *
+     * @apiParam {String} token Token containing user information.
+     *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": true,
+     *       "message": "{username} verified"
+     *     }
+     *
+     */
 
     baseRouter.route('/verify')
       .get(function(req,res){
@@ -285,6 +325,24 @@ module.exports  = function(app, express) {
 
   // route to create a new user
   // Require - username, password
+
+
+  /**
+   * @api {post} /setup Create a new user account
+   * @apiName /setup
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} username Users email address.
+   * @apiParam {String} password Users password.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "User created"
+   *     }
+   *
+   */
   baseRouter.route('/setup')
     .post(function(req, res) {
 
@@ -323,7 +381,7 @@ module.exports  = function(app, express) {
                     res.json({ success: false, message: 'Error' });
                   }
                   console.log(chalk.green('User created'));
-                  res.status(201).json({ success: true, message: 'User created' });
+                  res.status(200).json({ success: true, message: 'User created' });
                 });
               }
             }
@@ -346,12 +404,27 @@ module.exports  = function(app, express) {
 		console.log(req.body.target);
 		console.log(req.body.cClass);
 		console.log(req.body.claimId);
-		
+
 		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
-	
+
 	});
 
-  //Route to authenticate
+  /**
+   * @api {post} /authenticate Authenticate an user
+   * @apiName /authenticate
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} username Users email address.
+   * @apiParam {String} password Users password.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "token": "{TOKEN}"
+   *     }
+   *
+   */
   baseRouter.route('/authenticate')
     .post(function(req, res) {
 
@@ -407,7 +480,6 @@ module.exports  = function(app, express) {
                 // return the information including token as JSON
                 res.json({
                   success: true,
-                  message: 'Enjoy your token!',
                   token: token
                 });
               }
@@ -546,10 +618,24 @@ app.get('/connect/linkedin/callback',
       }
   });
 
-
+  /**
+   * @api {post} /api/ Test the secure api connection
+   * @apiName /api
+   * @apiGroup Secure Router
+   *
+   * @apiParam {String} token Token to authenticate the user.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "Welcome to secure sID api !!!"
+   *     }
+   *
+   */
   secureRouter.route('/')
     .post(function(req,res){
-      res.json({ message: 'Welcome to secure sID api !!!' });
+      res.json({ success: true, message: 'Welcome to secure sID api !!!' });
   });
 
 
