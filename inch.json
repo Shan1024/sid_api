@@ -1,0 +1,7 @@
+{
+  "files": {
+    "included": [
+      "api.js", "app/**/*.js", "socialconfig/**/*.js"
+    ]
+  }
+}
