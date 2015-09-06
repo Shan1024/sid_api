@@ -181,54 +181,6 @@
     "groupTitle": "Base_Router"
   },
   {
-    "type": "get",
-    "url": "/facebook",
-    "title": "Ger Facebook User information",
-    "name": "PostFacebook",
-    "group": "Facebook",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "<p>Number</p> ",
-            "optional": false,
-            "field": "id",
-            "description": "<p>Users unique ID.</p> "
-          }
-        ]
-      }
-    },
-    "permission": [
-      {
-        "name": "Token"
-      }
-    ],
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "<p>String</p> ",
-            "optional": false,
-            "field": "firstname",
-            "description": "<p>Firstname of the User.</p> "
-          },
-          {
-            "group": "Success 200",
-            "type": "<p>String</p> ",
-            "optional": false,
-            "field": "lastname",
-            "description": "<p>Lastname of the User.</p> "
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "app/routes.js",
-    "groupTitle": "Facebook"
-  },
-  {
     "type": "post",
     "url": "/api/",
     "title": "Test the secure api connection",
@@ -252,6 +204,45 @@
         {
           "title": "Success-Response:",
           "content": "HTTP/1.1 200 OK\n{\n  \"success\": true,\n  \"message\": \"Welcome to secure sID api !!!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/routes.js",
+    "groupTitle": "Secure_Router"
+  },
+  {
+    "type": "post",
+    "url": "/users/facebook",
+    "title": "Check wheather an facebook user is already in DB",
+    "name": "_users_facebook",
+    "group": "Secure_Router",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "<p>String</p> ",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>Facebook user ID.</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "<p>String</p> ",
+            "optional": false,
+            "field": "token",
+            "description": "<p>Token to authenticate the user.</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"success\": true,\n  \"message\": \"User is in the databse\"\n}",
           "type": "json"
         }
       ]

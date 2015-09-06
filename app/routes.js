@@ -421,7 +421,7 @@ module.exports  = function(app, express) {
 		if(targetUser === 1){
 			rate = "T";	//True		Green
 		}else if(targetUser === 2){
-			rate = "R"	//Reject	Red
+			rate = "R";	//Reject	Red
 		}else{
 			rate = "C";	//Uncertain Yellow
 		}
@@ -696,6 +696,24 @@ app.get('/connect/linkedin/callback',
   // //
   //         // on routes that end in /bears/:bear_id
   //         // ----------------------------------------------------
+
+  /**
+   * @api {post} /users/facebook Check wheather an facebook user is already in DB
+   * @apiName /users/facebook
+   * @apiGroup Secure Router
+   *
+   * @apiParam {String} user_id Facebook user ID.
+   * @apiParam {String} token Token to authenticate the user.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "User is in the databse"
+   *     }
+   *
+   */
+
   secureRouter.route('/users/facebook')
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
@@ -704,12 +722,12 @@ app.get('/connect/linkedin/callback',
       console.log('User ID: ' + user_id);
       User.findOne({'user.facebook.id': user_id}, function(err, user) {
         if (err){
-          res.json({message:"Error:"+err});
+          res.json({success: false, message: "Error: " + err});
         }else{
           if(user){
-            res.json({message:"User is in the databse"});
+            res.json({success: true, message: "User is in the databse"});
           }else{
-            res.json({message:"User not found"});
+            res.json({success: false, message: "User not found"});
           }
 
         }
