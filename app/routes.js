@@ -520,12 +520,22 @@ module.exports  = function(app, express) {
       }
   });
 
-baseRouter.get('/success', isLoggedIn, function(req, res){
-  res.json(req.user);
+baseRouter.get('/success', function(req, res){
+  var apiSecret = app.get('apiSecret');
+  var token = jwt.sign(req.user, apiSecret, {
+    expiresInMinutes: 1440 // expires in 24 hours
+  });
+
+  // return the information including token as JSON
+  res.json({
+    success: true,
+    token: token,
+    user: req.user
+  });
 });
 
 baseRouter.get('/failure', function(req, res){
-  res.json({success: 'false'});
+  res.json({success: false, token: undefined, user: req.user});
 });
 
 // process the login form
