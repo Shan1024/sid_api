@@ -408,6 +408,33 @@ module.exports  = function(app, express) {
 		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
 
 	});
+	
+	/*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
+  baseRouter.route('/claimScore')
+	.post(function(req,res){
+		console.log("get claim score called");
+		console.log(req.body.targetUser);
+		console.log(req.body.claimID);
+		
+		var targetUser = req.body.targetUser;
+		var claimID = req.body.claimID;
+		
+		var score;
+
+		hash = targetUser%claimID;
+		
+		var hash = hash%3;
+		if(hash === 1){
+			score = "T";	//True		Green
+		}else if(hash === 2){
+			score = "R";	//Reject	Red
+		}else{
+			score = "C";	//Uncertain Yellow
+		}
+
+		res.status(200).json({ rating:score });
+
+	});
 
   /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
   baseRouter.route('/profRating')
