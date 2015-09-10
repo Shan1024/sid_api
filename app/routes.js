@@ -387,11 +387,11 @@ module.exports  = function(app, express) {
             }
           });
         }else{
-          console.log(chalk.red('Authentication failed. Password required.'));
+          console.log(chalk.red('Setup failed. Password required.'));
           res.status(400).json({ success: false, message: 'Authentication failed. Password required.' });
         }
       }else{
-        console.log(chalk.red('Authentication failed. Username required.'));
+        console.log(chalk.red('Setup failed. Username required.'));
         res.status(400).json({ success: false, message: 'Authentication failed. Username required.' });
       }
   });
