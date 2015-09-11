@@ -7,9 +7,7 @@ var passport    = require('passport');
 var facebook    = require('../socialconfig/facebook.js');
 var linkedin    = require('../socialconfig/linkedin.js');
 
-
 module.exports  = function(app, express) {
-
   /*
       Here we are configuring our SMTP Server details.
       STMP is mail server which is responsible for sending and recieving email.
@@ -22,86 +20,7 @@ module.exports  = function(app, express) {
       }
   });
 
-
-  /*
-   * @apiDefine UserNotFoundError
-   *
-   * @apiError UserNotFound The id of the User was not found.
-   *
-   * @apiErrorExample Error-Response:
-   *     HTTP/1.1 404 Not Found
-   *     {
-   *       "error": "UserNotFound"
-   *     }
-   */
-
-  /*
-   * @api {get} /user/:id Request User information
-   * @apiName GetUser
-   * @apiGroup User
-   *
-   * @apiParam {Number} id Users unique ID.
-   *
-   * @apiSuccess {String} firstname Firstname of the User.
-   * @apiSuccess {String} lastname  Lastname of the User.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 200 OK
-   *     {
-   *       "firstname": "John",
-   *       "lastname": "Doe"
-   *     }
-   *
-   * @apiUse UserNotFoundError
-   */
-
-  /*
-   * @api {put} /user/ Modify User information
-   * @apiName PutUser
-   * @apiGroup User
-   *
-   * @apiParam {Number} id          Users unique ID.
-   * @apiParam {String} [firstname] Firstname of the User.
-   * @apiParam {String} [lastname]  Lastname of the User.
-   *
-   * @apiSuccessExample Success-Response:
-   *     HTTP/1.1 200 OK
-   *
-   * @apiUse UserNotFoundError
-   */
-
-
-
-
-
-
-   /*
-    * @api {post} /user Update User information
-    * @apiName PostUser
-    * @apiGroup User
-    *
-    * @apiParam {Number} id Users unique ID.
-    *
-    * @apiSuccess {String} firstname Firstname of the User.
-    * @apiSuccess {String} lastname  Lastname of the User.
-    */
-
-    /*
-     * @api {get} /facebook Ger Facebook User information
-     * @apiName PostFacebook
-     * @apiGroup Facebook
-     *
-     * @apiParam {Number} id Users unique ID.
-     *
-     * @apiPermission Token
-     * @apiSuccess {String} firstname Firstname of the User.
-     * @apiSuccess {String} lastname  Lastname of the User.
-     */
-
-
-
   var baseRouter = express.Router();
-
 
   /**
    * @api {get} / Test the api connection
@@ -142,7 +61,6 @@ module.exports  = function(app, express) {
    *       "message": "Email required."
    *     }
    */
-
   baseRouter.route('/sendEmail')
     .post(function(req,res){
       var email = req.body.email;
@@ -188,35 +106,32 @@ module.exports  = function(app, express) {
         console.log(chalk.red('Email required.'));
         res.json({ success: false, message: 'Email required.' });
       }
-      // transporter.sendMail({
-      //   from: 'fyp.social.id@gmail.com',
-      //   to: 'gambit1024@gmail.com',
-      //   subject: 'hello',
-      //   text: 'hello world!'
-      // });
-
-
+    // transporter.sendMail({
+    //   from: 'fyp.social.id@gmail.com',
+    //   to: 'gambit1024@gmail.com',
+    //   subject: 'hello',
+    //   text: 'hello world!'
+    // });
     });
 
 
-    /**
-     * @api {get} /verify Verify an email address
-     * @apiName /verify
-     * @apiGroup Base Router
-     *
-     * @apiParam {String} token Token containing user information.
-     *
-     * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *       "success": true,
-     *       "message": "{username} verified"
-     *     }
-     *
-     */
-
-    baseRouter.route('/verify')
-      .get(function(req,res){
+  /**
+   * @api {get} /verify Verify an email address
+   * @apiName /verify
+   * @apiGroup Base Router
+   *
+   * @apiParam {String} token Token containing user information.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "success": true,
+   *       "message": "{username} verified"
+   *     }
+   *
+   */
+  baseRouter.route('/verify')
+    .get(function(req,res){
       var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
       // decode token
@@ -271,17 +186,15 @@ module.exports  = function(app, express) {
             });
           }
         });
-
       } else {
-
         // if there is no token
         // return an error
         return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
+          success: false,
+          message: 'No token provided.'
         });
       }
-    });
+  });
 
   // baseRouter.route('/email')
   //   .post(function(req, res) {
@@ -322,9 +235,6 @@ module.exports  = function(app, express) {
   //     // res.send();
   //     // res.cookie('name','shan').send("Hello");
   // });
-
-  // route to create a new user
-  // Require - username, password
 
 
   /**
@@ -398,66 +308,59 @@ module.exports  = function(app, express) {
 
   /*DUMMY FUNCTION TO GET RATING SPECIFIC TO A CLAIM*/
   baseRouter.route('/claimRating')
-	.post(function(req,res){
-		console.log("get Rating api call received by DUMMY METHOD");
-		console.log(req.body.sender);
-		console.log(req.body.target);
-		console.log(req.body.cClass);
-		console.log(req.body.claimId);
-
-		res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
-
+  	.post(function(req,res){
+  		console.log("get Rating api call received by DUMMY METHOD");
+  		console.log(req.body.sender);
+  		console.log(req.body.target);
+  		console.log(req.body.cClass);
+  		console.log(req.body.claimId);
+		  res.status(200).json({ positive:123 , negative:12 , uncertain:27 });
 	});
-	
+
 	/*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
   baseRouter.route('/claimScore')
-	.post(function(req,res){
-		console.log("get claim score called");
-		console.log(req.body.targetUser);
-		console.log(req.body.claimID);
-		
-		var targetUser = req.body.targetUser;
-		var claimID = req.body.claimID;
-		
-		var score;
+	 .post(function(req,res){
+  		console.log("get claim score called");
+  		console.log(req.body.targetUser);
+  		console.log(req.body.claimID);
 
-		hash = targetUser%claimID;
-		
-		var hash = hash%3;
-		if(hash === 1){
-			score = "T";	//True		Green
-		}else if(hash === 2){
-			score = "R";	//Reject	Red
-		}else{
-			score = "C";	//Uncertain Yellow
-		}
+  		var targetUser = req.body.targetUser;
+  		var claimID = req.body.claimID;
 
-		res.status(200).json({ rating:score });
+  		var score;
 
+  		hash = targetUser%claimID;
+
+  		var hash = hash%3;
+  		if(hash === 1){
+  			score = "T";	//True		Green
+  		}else if(hash === 2){
+  			score = "R";	//Reject	Red
+  		}else{
+  			score = "C";	//Uncertain Yellow
+  		}
+
+  		res.status(200).json({ rating:score });
 	});
 
   /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
   baseRouter.route('/profRating')
-	.post(function(req,res){
-		console.log("get overall Rating api call received by DUMMY METHOD");
-		console.log(req.body.targetUser);
-		var targetUser = req.body.targetUser;
-		var rate;
+    .post(function(req,res){
+      console.log("get overall Rating api call received by DUMMY METHOD");
+  		console.log(req.body.targetUser);
+  		var targetUser = req.body.targetUser;
+  		var rate;
 
-		targetUser = targetUser%3;
-		if(targetUser === 1){
-			rate = "T";	//True		Green
-		}else if(targetUser === 2){
-			rate = "R";	//Reject	Red
-		}else{
-			rate = "C";	//Uncertain Yellow
-		}
-
-		res.status(200).json({ rating:rate });
-
+  		targetUser = targetUser%3;
+  		if(targetUser === 1){
+  			rate = "T";	//True		Green
+  		}else if(targetUser === 2){
+  			rate = "R";	//Reject	Red
+  		}else{
+  			rate = "C";	//Uncertain Yellow
+  		}
+  		res.status(200).json({ rating:rate });
 	});
-
-
 
   /**
    * @api {post} /authenticate Authenticate an user
@@ -547,87 +450,87 @@ module.exports  = function(app, express) {
       }
   });
 
-baseRouter.get('/success', function(req, res){
-  var apiSecret = app.get('apiSecret');
-  var token = jwt.sign(req.user, apiSecret, {
-    expiresInMinutes: 1440 // expires in 24 hours
+  baseRouter.get('/success', function(req, res){
+    var apiSecret = app.get('apiSecret');
+    var token = jwt.sign(req.user, apiSecret, {
+      expiresInMinutes: 1440 // expires in 24 hours
+    });
+
+    // return the information including token as JSON
+    res.json({
+      success: true,
+      token: token,
+      user: req.user
+    });
   });
 
-  // return the information including token as JSON
-  res.json({
-    success: true,
-    token: token,
-    user: req.user
+  baseRouter.get('/failure', function(req, res){
+    res.json({success: false, token: undefined, user: req.user});
   });
-});
 
-baseRouter.get('/failure', function(req, res){
-  res.json({success: false, token: undefined, user: req.user});
-});
+  // process the login form
+  baseRouter.post('/login', passport.authenticate('local-login', {
+      successRedirect : '/success', // redirect to the secure profile section
+      failureRedirect : '/failure', // redirect back to the signup page if there is an error
+      failureFlash : true // allow flash messages
+  }));
 
-// process the login form
-baseRouter.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/success', // redirect to the secure profile section
-    failureRedirect : '/failure', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-}));
+  // facebook -------------------------------
 
-// facebook -------------------------------
+  // send to facebook to do the authentication
+  baseRouter.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email, user_friends' }));
 
-// send to facebook to do the authentication
-baseRouter.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email, user_friends' }));
-
-// handle the callback after facebook has authenticated the user
-baseRouter.get('/auth/facebook/callback',
+  // handle the callback after facebook has authenticated the user
+  baseRouter.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         successRedirect : '/success',
         failureRedirect : '/failure'
-    }));
+  }));
 
 
-baseRouter.get('/auth/linkedin', passport.authenticate('linkedin'));
+  baseRouter.get('/auth/linkedin', passport.authenticate('linkedin'));
 
-baseRouter.get('/auth/linkedin/callback',
+  baseRouter.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', { failureRedirect: '/failure' }),
-        function(req, res) {
+      function(req, res) {
         // Successful authentication, redirect home.
         res.redirect('/success');
-    });
+  });
 
-    // =============================================================================
-    // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
-    // =============================================================================
+  // =============================================================================
+  // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
+  // =============================================================================
 
-    // locally --------------------------------
-app.get('/connect/local', function(req, res) {
-    res.render('connect-local.ejs', { message: req.flash('loginMessage') });
-});
-app.post('/connect/local', passport.authenticate('local-signup', {
-    successRedirect : '/success', // redirect to the secure profile section
-    failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-}));
+  // locally --------------------------------
+  app.get('/connect/local', function(req, res) {
+      res.render('connect-local.ejs', { message: req.flash('loginMessage') });
+  });
+  app.post('/connect/local', passport.authenticate('local-signup', {
+      successRedirect : '/success', // redirect to the secure profile section
+      failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
+      failureFlash : true // allow flash messages
+  }));
 
-    // facebook -------------------------------
+  // facebook -------------------------------
 
-    // send to facebook to do the authentication
-app.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
+  // send to facebook to do the authentication
+  app.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
 
-// handle the callback after facebook has authorized the user
-app.get('/connect/facebook/callback',
-  passport.authorize('facebook', {
-    successRedirect : '/success',
-    failureRedirect : '/failure'
-}));
+  // handle the callback after facebook has authorized the user
+  app.get('/connect/facebook/callback',
+    passport.authorize('facebook', {
+      successRedirect : '/success',
+      failureRedirect : '/failure'
+  }));
 
-app.get('/connect/linkedin', passport.authorize('linkedin', { res : ['r_basicprofile', 'r_fullprofile', 'r_emailaddress'] }));
+  app.get('/connect/linkedin', passport.authorize('linkedin', { res : ['r_basicprofile', 'r_fullprofile', 'r_emailaddress'] }));
 
-// the callback after google has authorized the user
-app.get('/connect/linkedin/callback',
-  passport.authorize('linkedin', {
-    successRedirect : '/success',
-    failureRedirect : '/failure'
-}));
+  // the callback after google has authorized the user
+  app.get('/connect/linkedin/callback',
+    passport.authorize('linkedin', {
+      successRedirect : '/success',
+      failureRedirect : '/failure'
+  }));
 
 
   // ROUTES FOR OUR API
@@ -750,10 +653,7 @@ app.get('/connect/linkedin/callback',
    *     }
    *
    */
-
   secureRouter.route('/users/facebook')
-
-    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .post(function(req, res) {
       var user_id=req.body.user_id;
       console.log('User ID: ' + user_id);
@@ -815,9 +715,10 @@ app.get('/connect/linkedin/callback',
 
   // REGISTER OUR ROUTES -------------------------------
 
-  // more routes for our API will happen here
+  // routers that do not need a token are here
   app.use('/', baseRouter);
 
-  // all of our routes will be prefixed with /api
+  // all of our secure routes will be prefixed with /api
   app.use('/api', secureRouter);
+
 };

@@ -46,11 +46,6 @@
    * @apiUse UserNotFoundError
    */
 
-
-
-
-
-
    /*
     * @api {post} /user Update User information
     * @apiName PostUser
