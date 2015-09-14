@@ -17,9 +17,8 @@ var cookieParser  = require('cookie-parser');
 var passport      = require('passport');
 var flash         = require('connect-flash');
 var session       = require('express-session');
-
-
 var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
+
 var config      = require('./config/config'); // get our config file
 
 // This line is from the Node.js HTTPS documentation.
@@ -30,9 +29,7 @@ var options = {
 
 mongoose.connect(config.database); // connect to database
 
-
 require('./socialconfig/passport')(passport); // pass passport for configuration
-
 
 app.set('apiSecret', config.apiSecret); // secret variable
 app.set('host', config.host);
@@ -56,10 +53,11 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
-
 // creating routes
-require('./app/routes.js')(app, express);
-// app.use(express.static(__dirname + '/'))
+require('./app/routes/baseRoutes.js')(app, express);
+require('./app/routes/secureRoutes.js')(app, express);
+
+require('./app/routes/dummyRoutes.js')(app, express);
 
 // Create an HTTP service.
 http.createServer(app).listen(config.httpPort);
