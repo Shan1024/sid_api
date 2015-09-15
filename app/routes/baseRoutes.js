@@ -6,11 +6,11 @@ var passport = require('passport');
 
 var User = require('../models/user'); // get our mongoose model
 
-module.exports = function(app, express) {
+module.exports = function (app, express) {
     /*
-        Here we are configuring our SMTP Server details.
-        STMP is mail server which is responsible for sending and recieving email.
-    */
+     Here we are configuring our SMTP Server details.
+     STMP is mail server which is responsible for sending and recieving email.
+     */
     var transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -34,7 +34,7 @@ module.exports = function(app, express) {
      *       "message": "Welcome to sID !!!"
      *     }
      */
-    baseRouter.get('/', function(req, res) {
+    baseRouter.get('/', function (req, res) {
         res.json({
             message: 'Welcome to sID !!!'
         });
@@ -63,7 +63,7 @@ module.exports = function(app, express) {
      *     }
      */
     baseRouter.route('/sendEmail')
-        .post(function(req, res) {
+        .post(function (req, res) {
             var email = req.body.email;
 
             if (email) {
@@ -93,7 +93,7 @@ module.exports = function(app, express) {
                 };
 
                 // send mail with defined transport object
-                transporter.sendMail(mailOptions, function(error, info) {
+                transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         console.log(chalk.red(error));
                         res.json({
@@ -139,14 +139,14 @@ module.exports = function(app, express) {
      *
      */
     baseRouter.route('/verify')
-        .get(function(req, res) {
+        .get(function (req, res) {
             var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
             // decode token
             if (token) {
 
                 // verifies secret and checks exp
-                jwt.verify(token, app.get('apiSecret'), function(err, decoded) {
+                jwt.verify(token, app.get('apiSecret'), function (err, decoded) {
                     if (err) {
                         return res.json({
                             success: false,
@@ -163,7 +163,7 @@ module.exports = function(app, express) {
 
                         User.findOne({
                             'userDetails.local.username': username
-                        }, function(err, user) {
+                        }, function (err, user) {
                             if (err) {
                                 res.status(403).json({
                                     success: false,
@@ -185,7 +185,7 @@ module.exports = function(app, express) {
 
                                         console.log(chalk.cyan('User: ' + user));
 
-                                        user.save(function(err) {
+                                        user.save(function (err) {
                                             if (err) {
                                                 res.status(403).json({
                                                     success: false,
@@ -280,7 +280,7 @@ module.exports = function(app, express) {
      *
      */
     baseRouter.route('/setup')
-        .post(function(req, res) {
+        .post(function (req, res) {
 
             var username = req.body.username;
             var password = req.body.password;
@@ -292,7 +292,7 @@ module.exports = function(app, express) {
 
                     User.findOne({
                         'user.local.username': username
-                    }, function(err, user) {
+                    }, function (err, user) {
                         if (err) {
                             console.log(chalk.red('Error'));
                             res.json({
@@ -317,7 +317,7 @@ module.exports = function(app, express) {
                                 console.log(chalk.yellow('Hashed Password: ' + newUser.user.local.password));
 
                                 // save the sample user
-                                newUser.save(function(err) {
+                                newUser.save(function (err) {
                                     if (err) {
                                         console.log(chalk.red('Error'));
                                         res.json({
@@ -367,7 +367,7 @@ module.exports = function(app, express) {
      *
      */
     baseRouter.route('/authenticate')
-        .post(function(req, res) {
+        .post(function (req, res) {
 
             var username = req.body.username;
             var password = req.body.password;
@@ -380,8 +380,8 @@ module.exports = function(app, express) {
                     console.log(chalk.yellow('Password: ' + password));
 
                     User.findOne({
-                        'user.local.username': username
-                    }, function(err, user) {
+                        'userDetails.local.username': username
+                    }, function (err, user) {
 
                         if (err) throw err;
 
@@ -416,7 +416,7 @@ module.exports = function(app, express) {
                                 var tempUser = {
                                     iss: 'sID',
                                     context: {
-                                        username: user.user.local.username
+                                        username: user.userDetails.local.username
                                     }
                                 };
 
@@ -450,7 +450,7 @@ module.exports = function(app, express) {
             }
         });
 
-    baseRouter.get('/success', function(req, res) {
+    baseRouter.get('/success', function (req, res) {
         var apiSecret = app.get('apiSecret');
         var token = jwt.sign(req.user, apiSecret, {
             expiresInMinutes: 1440 // expires in 24 hours
@@ -464,7 +464,7 @@ module.exports = function(app, express) {
         });
     });
 
-    baseRouter.get('/failure', function(req, res) {
+    baseRouter.get('/failure', function (req, res) {
         res.json({
             success: false,
             token: undefined,
@@ -500,7 +500,7 @@ module.exports = function(app, express) {
         passport.authenticate('linkedin', {
             failureRedirect: '/failure'
         }),
-        function(req, res) {
+        function (req, res) {
             // Successful authentication, redirect home.
             res.redirect('/success');
         });
@@ -510,7 +510,7 @@ module.exports = function(app, express) {
     // =============================================================================
 
     // locally --------------------------------
-    app.get('/connect/local', function(req, res) {
+    app.get('/connect/local', function (req, res) {
         res.render('connect-local.ejs', {
             message: req.flash('loginMessage')
         });
