@@ -15,7 +15,6 @@ var cookieParser = require('cookie-parser');
 var passport = require('passport');
 var flash = require('connect-flash');
 var session = require('express-session');
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 var config = require('./config/config'); // get our config file
 
@@ -51,6 +50,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(session({
     secret: config.sessionSecret
 })); // session secret
+
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
@@ -63,6 +63,8 @@ require('./app/routes/dummyRoutes.js')(app, express);
 
 // Create an HTTP service.
 http.createServer(app).listen(config.httpPort);
+console.log(chalk.green("http server started at port " + config.httpPort));
 
 // Create an HTTPS service identical to the HTTP service.
 https.createServer(options, app).listen(config.httpsPort);
+console.log(chalk.green("https server started at port " + config.httpsPort));

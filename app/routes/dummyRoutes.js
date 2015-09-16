@@ -1,10 +1,10 @@
-module.exports = function(app, express) {
+module.exports = function (app, express) {
 
     var baseRouter = express.Router();
 
     /*DUMMY FUNCTION TO GET RATING SPECIFIC TO A CLAIM*/
     baseRouter.route('/claimRating')
-        .post(function(req, res) {
+        .post(function (req, res) {
             console.log("get Rating api call received by DUMMY METHOD");
             console.log(req.body.sender);
             console.log(req.body.target);
@@ -19,7 +19,7 @@ module.exports = function(app, express) {
 
     /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
     baseRouter.route('/claimScore')
-        .post(function(req, res) {
+        .post(function (req, res) {
             console.log("get claim score called");
             console.log(req.body.targetUser);
             console.log(req.body.claimID);
@@ -47,7 +47,7 @@ module.exports = function(app, express) {
 
     /*DUMMY FUNCTION TO GET OVERALL RATING of a profile*/
     baseRouter.route('/profRating')
-        .post(function(req, res) {
+        .post(function (req, res) {
             console.log("get overall Rating api call received by DUMMY METHOD");
             console.log(req.body.targetUser);
             var targetUser = req.body.targetUser;
