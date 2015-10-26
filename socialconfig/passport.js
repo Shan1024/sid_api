@@ -5,6 +5,7 @@ var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // load up the user model
 var User       = require('../app/models/user');
+var Facebook       = require('../app/models/facebook');
 
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
@@ -168,9 +169,9 @@ module.exports = function(passport) {
 
                         // if there is a user id already but no token (user was linked at one point and then removed)
                         if (!user.facebook.token) {
-                            user.user.facebook.token = token;
-                            user.user.facebook.name  = profile.displayName;
-                            user.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                            user.userDetails.facebook.token = token;
+                            user.userDetails.facebook.name  = profile.displayName;
+                            user.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                             //console.log("USER: "+user);
 
@@ -187,10 +188,13 @@ module.exports = function(passport) {
                         // if there is no user, create them
                         var newUser            = new User();
 
-                        newUser.user.facebook.id    = profile.id;
-                        newUser.user.facebook.token = token;
-                        newUser.user.facebook.name  = profile.displayName;
-                        newUser.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                        var facebook = new Facebook();
+                        newUser.userDetails.facebook = facebook;
+
+                        newUser.userDetails.facebook.id    = profile.id;
+                        newUser.userDetails.facebook.token = token;
+                        newUser.userDetails.facebook.name  = profile.displayName;
+                        newUser.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                         newUser.save(function(err) {
                             if (err)
@@ -205,10 +209,10 @@ module.exports = function(passport) {
                 // user already exists and is logged in, we have to link accounts
                 var user            = req.user; // pull the user out of the session
 
-                user.user.facebook.id    = profile.id;
-                user.user.facebook.token = token;
-                user.user.facebook.name  = profile.displayName ;
-                user.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                user.userDetails.facebook.id    = profile.id;
+                user.userDetails.facebook.token = token;
+                user.userDetails.facebook.name  = profile.displayName ;
+                user.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                 user.save(function(err) {
                     if (err)

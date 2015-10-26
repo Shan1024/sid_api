@@ -4,6 +4,7 @@
 // call the packages we need
 var express = require('express'); // call express
 var app = express(); // define our app using express
+var path = require('path');
 var bodyParser = require('body-parser');
 var https = require('https');
 var http = require('http');
@@ -33,6 +34,10 @@ app.set('host', config.host);
 app.set('username', config.username);
 app.set('password', config.password);
 
+app.set('views', path.join(__dirname, 'views'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({
@@ -58,7 +63,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // creating routes
 require('./app/routes/baseRoutes.js')(app, express);
 require('./app/routes/secureRoutes.js')(app, express);
-
+require('./app/routes/webRoutes.js')(app, express);
 require('./app/routes/dummyRoutes.js')(app, express);
 
 // Create an HTTP service.
