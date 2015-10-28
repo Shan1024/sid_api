@@ -1,43 +1,52 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">sID Social Identity</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Me</a></li>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Find Friends</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Settings</a></li>
-      </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search for friend...">
-      </form>
-    </div>
-  </div>
-</nav>
+<div class="container">
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-3 col-md-2 sidebar">
-      <ul class="nav nav-sidebar">
-        <li><a ui-sref='.profile'>Edit Profile</a></li>
-        <!-- <li><a ui-sref='newsfeed'>News Feed</a></li>
-        <li><a ui-sref='myratings'>View My Ratings</a></li>
-        <li><a ui-sref='rateafriend'>Rate A Friend</a></li> -->
-      </ul>
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-      {{HomeCtrlTest}}
-      <div ui-view></div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <h3><span class="fa fa-user"></span> Local</h3>
+
+                <% if (user.userDetails.local.username) { %>
+                    <p>
+                        <strong>id</strong>: <%= user._id %><br>
+                        <strong>email</strong>: <%= user.userDetails.local.username %><br>
+                        <strong>password</strong>: <%= user.userDetails.local.password %>
+                    </p>
+
+                    <a href="/unlink/local" class="btn btn-default">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                <% } %>
+
+            </div>
+        </div>
+
+        <!-- FACEBOOK INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
+
+                <!-- check if the user has this token (is the user authenticated with this social account) -->
+                <% if (user.userDetails.facebook) { %>
+                    <p>
+                        <strong>id</strong>: <%= user.userDetails.facebook.id %><br>
+                        <strong>token</strong>: <%= user.userDetails.facebook.token %><br>
+                        <strong>email</strong>: <%= user.userDetails.facebook.email %><br>
+                        <strong>name</strong>: <%= user.userDetails.facebook.name %><br>
+                    </p>
+
+                    <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>
+                <% } %>
+
+            </div>
+        </div>
     </div>
-  </div>
 </div>

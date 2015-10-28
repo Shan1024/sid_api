@@ -451,17 +451,19 @@ module.exports = function (app, express) {
         });
 
     baseRouter.get('/success', function (req, res) {
-        var apiSecret = app.get('apiSecret');
-        var token = jwt.sign(req.user, apiSecret, {
-            expiresInMinutes: 1440 // expires in 24 hours
-        });
+        // var apiSecret = app.get('apiSecret');
+        // var token = jwt.sign(req.user, apiSecret, {
+        //     expiresInMinutes: 1440 // expires in 24 hours
+        // });
+        //
+        // // return the information including token as JSON
+        // res.json({
+        //     success: true,
+        //     token: token,
+        //     user: req.user
+        // });
 
-        // return the information including token as JSON
-        res.json({
-            success: true,
-            token: token,
-            user: req.user
-        });
+        res.redirect('/web/successredirect');
     });
 
     baseRouter.get('/failure', function (req, res) {
@@ -474,6 +476,13 @@ module.exports = function (app, express) {
 
     // process the login form
     baseRouter.post('/login', passport.authenticate('local-login', {
+        successRedirect: '/success', // redirect to the secure profile section
+        failureRedirect: '/failure', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
+    }));
+
+    // process the signup form
+    baseRouter.post('/signup', passport.authenticate('local-signup', {
         successRedirect: '/success', // redirect to the secure profile section
         failureRedirect: '/failure', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
@@ -546,6 +555,38 @@ module.exports = function (app, express) {
             successRedirect: '/success',
             failureRedirect: '/failure'
         }));
+
+        // =============================================================================
+        // UNLINK ACCOUNTS =============================================================
+        // =============================================================================
+        // used to unlink accounts. for social accounts, just remove the token
+        // for local account, remove email and password
+        // user account will stay active in case they want to reconnect in the future
+
+        // local -----------------------------------
+        app.get('/unlink/local', function(req, res) {
+            var user            = req.user;
+            user.userDetails.local.username    = undefined;
+            user.userDetails.local.password = undefined;
+            user.save(function(err) {
+                res.redirect('/success');
+            });
+        });
+
+        // facebook -------------------------------
+        app.get('/unlink/facebook', function(req, res) {
+            var user            = req.user;
+            user.userDetails.facebook.token = undefined;
+            user.save(function(err) {
+                res.redirect('/success');
+            });
+        });
+
+        // route for logging out
+      app.get('/logout', function(req, res) {
+          req.logout();
+          res.redirect('/web/');
+      });
 
     // route middleware to ensure user is logged in
     function isLoggedIn(req, res, next) {

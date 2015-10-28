@@ -18,10 +18,18 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       url: '/rateafriend',
       templateUrl: 'partials/rateafriend.html',
       controller: 'RateAFriendCtrl'
-    })*/.state('login', {
+    })*/.state('landing', {
+      url: '/landing',
+      templateUrl: 'partials/landing.html',
+      controller: 'LandingCtrl'
+    }).state('login', {
       url: '/login',
       templateUrl: 'partials/login.html',
       controller: 'LoginCtrl'
+    }).state('signup', {
+      url: '/signup',
+      templateUrl: 'partials/signup.html',
+      controller: 'SignUpCtrl'
     }).state('home', {
       url: '/home',
       templateUrl: 'partials/home.html',
@@ -32,7 +40,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       controller: 'ProfileCtrl'
     });
 
-  $urlRouterProvider.otherwise('/login');
+  $urlRouterProvider.otherwise('landing');
 }]);
 
 // app.controller('EditProfileCtrl', ['$scope', function($scope){
@@ -52,8 +60,16 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 //   $scope.RateAFriendCtrlTest = 'RateAFriendCtrlTest';
 // }]);
 
+app.controller('LandingCtrl', ['$scope', function($scope){
+  $scope.LandingCtrlTest = 'LandingCtrlTest';
+}]);
+
 app.controller('LoginCtrl', ['$scope', function($scope){
   $scope.LoginCtrlTest = 'LoginCtrlTest';
+}]);
+
+app.controller('SignUpCtrl', ['$scope', function($scope){
+  $scope.SignUpCtrlTest = 'SignUpCtrlTest';
 }]);
 
 app.controller('HomeCtrl', ['$scope', function($scope){
