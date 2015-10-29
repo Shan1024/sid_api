@@ -30,6 +30,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       url: '/signup',
       templateUrl: 'partials/signup.html',
       controller: 'SignUpCtrl'
+    }).state('connectlocal', {
+      url: '/connectlocal',
+      templateUrl: 'partials/connectlocal.html',
+      controller: 'ConnectLocalCtrl'
     }).state('home', {
       url: '/home',
       templateUrl: 'partials/home.html',
@@ -78,4 +82,8 @@ app.controller('HomeCtrl', ['$scope', function($scope){
 
 app.controller('ProfileCtrl', ['$scope', function($scope){
   $scope.ProfileCtrlTest = 'ProfileCtrlTest';
+}]);
+
+app.controller('ConnectLocalCtrl', ['$scope', function($scope){
+  $scope.ConnectLocalCtrlTest = 'ConnectLocalCtrlTest';
 }]);

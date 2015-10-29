@@ -28,6 +28,10 @@ module.exports = function (app, express) {
         res.render('partials/signup');
     });
 
+    baseRouter.get('/partials/connectlocal.html', function (req, res, next) {
+        res.render('partials/connectlocal');
+    });
+
     baseRouter.get('/partials/home.html', function (req, res, next) {
         console.log(req.user);
 
@@ -64,6 +68,10 @@ module.exports = function (app, express) {
 
     baseRouter.get('/successredirect', function (req, res, next) {
         res.redirect('/web/#/home');
+    });
+
+    baseRouter.get('/connectlocal', function (req, res, next) {
+        res.redirect('/web/#/connectlocal');
     });
 
 

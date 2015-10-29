@@ -520,9 +520,11 @@ module.exports = function (app, express) {
 
     // locally --------------------------------
     app.get('/connect/local', function (req, res) {
-        res.render('connect-local.ejs', {
-            message: req.flash('loginMessage')
-        });
+      // console.log('inside connect local##################');
+      //   res.render('/partials/connectlocal.html', {
+      //       message: req.flash('loginMessage')
+      //   });
+      res.redirect('/web/connectlocal');
     });
 
     app.post('/connect/local', passport.authenticate('local-signup', {
