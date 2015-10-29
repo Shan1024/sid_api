@@ -5,6 +5,7 @@ var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // load up the user model
 var User       = require('../app/models/user');
+var Facebook       = require('../app/models/facebook');
 
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
@@ -47,7 +48,7 @@ module.exports = function(passport) {
 
         // asynchronous
         process.nextTick(function() {
-            User.findOne({ 'local.email' :  email }, function(err, user) {
+            User.findOne({ 'userDetails.local.username' :  email }, function(err, user) {
                 // if there are any errors, return the error
                 if (err)
                     return done(err);
@@ -84,7 +85,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
             // if the user is not already logged in:
             if (!req.user) {
-                User.findOne({ 'local.email' :  email }, function(err, user) {
+                User.findOne({ 'userDetails.local.username' :  email }, function(err, user) {
                     // if there are any errors, return the error
                     if (err)
                         return done(err);
@@ -97,8 +98,8 @@ module.exports = function(passport) {
                         // create the user
                         var newUser            = new User();
 
-                        newUser.user.local.email    = email;
-                        newUser.user.local.password = newUser.generateHash(password);
+                        newUser.userDetails.local.username    = email;
+                        newUser.userDetails.local.password = newUser.generateHash(password);
 
                         newUser.save(function(err) {
                             if (err)
@@ -110,10 +111,10 @@ module.exports = function(passport) {
 
                 });
             // if the user is logged in but has no local account...
-            } else if ( !req.user.local.email ) {
+          } else if ( !req.user.userDetails.local.username ) {
                 // ...presumably they're trying to connect a local account
                 // BUT let's check if the email used to connect a local account is being used by another user
-                User.findOne({ 'local.email' :  email }, function(err, user) {
+                User.findOne({ 'userDetails.local.username' :  email }, function(err, user) {
                     if (err)
                         return done(err);
 
@@ -122,8 +123,8 @@ module.exports = function(passport) {
                         // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
                     } else {
                         var tempUser = req.user;//User already used above
-                        tempUser.user.local.email = email;
-                        tempUser.user.local.password = user.generateHash(password);
+                        tempUser.user.userDetails.local.username = email;
+                        tempUser.user.userDetails.local.password = user.generateHash(password);
                         tempUser.save(function (err) {
                             if (err)
                                 return done(err);
@@ -160,17 +161,17 @@ module.exports = function(passport) {
             // check if the user is already logged in
             if (!req.user) {
 
-                User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
+                User.findOne({ 'userDetails.facebook.id' : profile.id }, function(err, user) {
                     if (err)
                         return done(err);
 
                     if (user) {
 
                         // if there is a user id already but no token (user was linked at one point and then removed)
-                        if (!user.facebook.token) {
-                            user.user.facebook.token = token;
-                            user.user.facebook.name  = profile.displayName;
-                            user.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                        if (!user.userDetails.facebook.token) {
+                            user.userDetails.facebook.token = token;
+                            user.userDetails.facebook.name  = profile.displayName;
+                            user.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                             //console.log("USER: "+user);
 
@@ -187,10 +188,13 @@ module.exports = function(passport) {
                         // if there is no user, create them
                         var newUser            = new User();
 
-                        newUser.user.facebook.id    = profile.id;
-                        newUser.user.facebook.token = token;
-                        newUser.user.facebook.name  = profile.displayName;
-                        newUser.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                        var facebook = new Facebook();
+                        newUser.userDetails.facebook = facebook;
+
+                        newUser.userDetails.facebook.id    = profile.id;
+                        newUser.userDetails.facebook.token = token;
+                        newUser.userDetails.facebook.name  = profile.displayName;
+                        newUser.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                         newUser.save(function(err) {
                             if (err)
@@ -205,10 +209,13 @@ module.exports = function(passport) {
                 // user already exists and is logged in, we have to link accounts
                 var user            = req.user; // pull the user out of the session
 
-                user.user.facebook.id    = profile.id;
-                user.user.facebook.token = token;
-                user.user.facebook.name  = profile.displayName ;
-                user.user.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                var facebook = new Facebook();
+                user.userDetails.facebook = facebook;
+
+                user.userDetails.facebook.id    = profile.id;
+                user.userDetails.facebook.token = token;
+                user.userDetails.facebook.name  = profile.displayName ;
+                user.userDetails.facebook.email = (profile.emails[0].value || '').toLowerCase();
 
                 user.save(function(err) {
                     if (err)
