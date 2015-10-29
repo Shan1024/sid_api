@@ -236,8 +236,7 @@ module.exports = function (app, express) {
                             console.log(chalk.blue("Target found: " + JSON.stringify(target, null, "\t")));
 
                             User.findOne({
-                                _id: me.user
-                                ,
+                                _id: me.user,
                                 'facebook.ratedByMe': {$elemMatch: {targetid: target._id}}
                             }, function (err, user) {
                                 if (user) {
@@ -276,7 +275,7 @@ module.exports = function (app, express) {
                                                 console.log(chalk.red(err));
                                             }
 
-                                            console.log("Model: "+model);
+                                            console.log("Model: " + model);
                                         }
                                     );
 
@@ -292,7 +291,7 @@ module.exports = function (app, express) {
 
                 } else {
                     console.log(chalk.red("User not found"));
-                     me = new Facebook({
+                    me = new Facebook({
                         id: myid
                     });
 
@@ -462,41 +461,41 @@ module.exports = function (app, express) {
             //
             //        Facebook.populate(facebook);
 
-               //Facebook.populate(facebook, , function (err, doc) {
-               //    console.log(JSON.stringify(doc, null, "\t"));
-               //});
+            //Facebook.populate(facebook, , function (err, doc) {
+            //    console.log(JSON.stringify(doc, null, "\t"));
+            //});
 
-                   Facebook.findOne({
-                       id: mongoose.Types.ObjectId("100000211592969")
-                   })
-                       .populate('user')
-                       //.populate({
-                       //    path: 'user.facebook.ratedByMe',
-                       //    model: 'FacebookRatedByMe'
-                       //})
-                       //.populate('facebook.ratedByMe')
-                       .exec(function (error, facebook) {
-                           console.log(JSON.stringify(facebook, null, "\t"))
-                          //  var options = {
-                          //      path: 'user.facebook.ratedByMe',
-                          //      model: 'FacebookRatedByMe'
-                          //  };
-                           //
-                          //  Facebook.populate(facebook, options, function (err, f) {
-                          //      console.log(JSON.stringify(f, null, "\t"));
-                           //
-                          //      //Facebook.populate(f, { }, function (err, ok) {
-                          //      //    console.log(JSON.stringify(ok, null, "\t"))
-                          //      //
-                          //      //
-                          //      //
-                          //      //});
-                           //
-                          //  });
+            Facebook.findOne({
+                id: mongoose.Types.ObjectId("100000211592969")
+            })
+                .populate('user')
+                //.populate({
+                //    path: 'user.facebook.ratedByMe',
+                //    model: 'FacebookRatedByMe'
+                //})
+                //.populate('facebook.ratedByMe')
+                .exec(function (error, facebook) {
+                    console.log(JSON.stringify(facebook, null, "\t"));
+                    //  var options = {
+                    //      path: 'user.facebook.ratedByMe',
+                    //      model: 'FacebookRatedByMe'
+                    //  };
+                    //
+                    //  Facebook.populate(facebook, options, function (err, f) {
+                    //      console.log(JSON.stringify(f, null, "\t"));
+                    //
+                    //      //Facebook.populate(f, { }, function (err, ok) {
+                    //      //    console.log(JSON.stringify(ok, null, "\t"))
+                    //      //
+                    //      //
+                    //      //
+                    //      //});
+                    //
+                    //  });
 
-                       });
+                });
 
-                       res.json({message: "OK"});
+            res.json({message: "OK"});
 
             // });
         });

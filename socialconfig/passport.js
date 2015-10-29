@@ -182,7 +182,7 @@ module.exports = function (passport) {
                                     'userDetails.facebook': facebook._id
                                 });
 
-                                facebook.user=newUser._id;
+                                facebook.user = newUser._id;
 
                                 facebook.save(function (err) {
                                     if (err)
@@ -208,28 +208,28 @@ module.exports = function (passport) {
 
                         } else {
                             // if there is no user, create them
-                            var facebook = new Facebook();
+                            var newFacebook = new Facebook();
 
-                            facebook.id = profile.id;
-                            facebook.token = token;
-                            facebook.name = profile.displayName;
-                            facebook.email = (profile.emails[0].value || '').toLowerCase();
+                            newFacebook.id = profile.id;
+                            newFacebook.token = token;
+                            newFacebook.name = profile.displayName;
+                            newFacebook.email = (profile.emails[0].value || '').toLowerCase();
 
-                            var newUser = new User({
-                                'userDetails.facebook': facebook._id
+                            var newFbUser = new User({
+                                'userDetails.facebook': newFacebook._id
                             });
 
-                            newUser.save(function (err) {
+                            newFbUser.save(function (err) {
                                 if (err)
                                     return done(err);
 
-                                facebook.user = newUser._id;
+                                newFacebook.user = newFbUser._id;
 
-                                facebook.save(function (err) {
+                                newFacebook.save(function (err) {
                                     if (err)
                                         return done(err);
 
-                                    return done(null, newUser);
+                                    return done(null, newFbUser);
                                 });
                             });
                         }
@@ -239,23 +239,58 @@ module.exports = function (passport) {
                     // user already exists and is logged in, we have to link accounts
                     var user = req.user; // pull the user out of the session
 
-                    var facebook = new Facebook();
 
-                    facebook.id = profile.id;
-                    facebook.token = token;
-                    facebook.name = profile.displayName;
-                    facebook.email = (profile.emails[0].value || '').toLowerCase();
+                    Facebook.findOne({
+                        id: profile.id
+                    }, function (err, fbUser) {
 
-                    facebook.user = user._id;
+                        if (fbUser) {
 
-                    user.userDetails.facebook = facebook._id;
+                            fbUser.user = user._id;
 
-                    user.save(function (err) {
-                        if (err)
-                            return done(err);
+                            fbUser.save(function (err) {
+                                if (err)
+                                    return done(err);
 
-                        return done(null, user);
+                                user.userDetails.facebook = fbUser._id;
+
+                                user.save(function (err) {
+                                    if (err)
+                                        return done(err);
+
+                                    return done(null, user);
+                                });
+                            });
+
+                        } else {
+
+                            var facebook = new Facebook();
+
+                            facebook.id = profile.id;
+                            facebook.token = token;
+                            facebook.name = profile.displayName;
+                            facebook.email = (profile.emails[0].value || '').toLowerCase();
+
+                            facebook.user = user._id;
+
+                            facebook.save(function (err) {
+                                if (err)
+                                    return done(err);
+
+                                user.userDetails.facebook = facebook._id;
+
+                                user.save(function (err) {
+                                    if (err)
+                                        return done(err);
+
+                                    return done(null, user);
+                                });
+                            });
+
+                        }
                     });
+
+
                 }
             });
         }));

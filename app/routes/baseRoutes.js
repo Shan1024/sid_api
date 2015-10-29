@@ -576,7 +576,7 @@ module.exports = function (app, express) {
         // facebook -------------------------------
         app.get('/unlink/facebook', function(req, res) {
             var user            = req.user;
-            user.userDetails.facebook.token = undefined;
+            user.userDetails.facebook= undefined;
             user.save(function(err) {
                 res.redirect('/success');
             });
