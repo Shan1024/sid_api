@@ -10,44 +10,61 @@ var mongoose = require('mongoose');
 var User = require('../models/user'); // get our mongoose model
 
 module.exports = function (app, express) {
-  var baseRouter = express.Router();
+    var baseRouter = express.Router();
 
-  baseRouter.get('/', function(req, res, next) {
-    res.render('index');
-  });
+    baseRouter.get('/', function (req, res, next) {
+        res.render('index');
+    });
 
-  baseRouter.get('/partials/landing.html', function(req, res, next) {
-    res.render('partials/landing');
-  });
+    baseRouter.get('/partials/landing.html', function (req, res, next) {
+        res.render('partials/landing');
+    });
 
-  baseRouter.get('/partials/login.html', function(req, res, next) {
-    res.render('partials/login');
-  });
+    baseRouter.get('/partials/login.html', function (req, res, next) {
+        res.render('partials/login');
+    });
 
-  baseRouter.get('/partials/signup.html', function(req, res, next) {
-    res.render('partials/signup');
-  });
+    baseRouter.get('/partials/signup.html', function (req, res, next) {
+        res.render('partials/signup');
+    });
 
-  baseRouter.get('/partials/home.html', function(req, res, next) {
-    console.log(req.user);
-    res.render('partials/home', { user : req.user });
-  });
+    baseRouter.get('/partials/home.html', function (req, res, next) {
+        console.log(req.user);
 
-  baseRouter.get('/partials/profile.html', function(req, res, next) {
-    res.render('partials/profile');
-  });
+        User.findById(req.user._id)
+            //.populate('userDetails.facebook')
+            //.populate('facebook.ratedByMe')
+            .exec(function (error, user) {
+                console.log(JSON.stringify(user, null, "\t"));
+            });
 
-  baseRouter.get('/signup', function(req, res, next) {
-    res.render('partials/signup', { message: req.flash('signupMessage') });
-  });
+        User.findById(req.user._id)
+            .populate('userDetails.facebook')
+            //.populate('facebook.ratedByMe')
+            .exec(function (error, user) {
+                console.log(JSON.stringify(user, null, "\t"));
+                res.render('partials/home', {user: user});
+            });
 
-  baseRouter.get('/login', function(req, res, next) {
-    res.render('partials/login', { message: req.flash('loginMessage') });
-  });
 
-  baseRouter.get('/successredirect', function(req, res, next){
-    res.redirect('/web/#/home');
-  });
+
+    });
+
+    baseRouter.get('/partials/profile.html', function (req, res, next) {
+        res.render('partials/profile');
+    });
+
+    baseRouter.get('/signup', function (req, res, next) {
+        res.render('partials/signup', {message: req.flash('signupMessage')});
+    });
+
+    baseRouter.get('/login', function (req, res, next) {
+        res.render('partials/login', {message: req.flash('loginMessage')});
+    });
+
+    baseRouter.get('/successredirect', function (req, res, next) {
+        res.redirect('/web/#/home');
+    });
 
 
     // route middleware to ensure user is logged in

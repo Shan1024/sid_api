@@ -50,6 +50,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 app.use(express.static(__dirname + '/public'));
+// app.use(express.static(__dirname + '/views'));
 
 // required for passport
 app.use(session({
