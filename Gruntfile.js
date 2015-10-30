@@ -1,8 +1,8 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     grunt.initConfig({
         jshint: {
-            all: ['*.js', 'socialconfig/*.js', 'app/**/*.js', 'test/*.js']
+            all: ['*.js', 'app/**/*.js', 'socialconfig/*.js', 'test/*.js']
         },
         mochaTest: {
             test: {
@@ -32,8 +32,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-apidoc');
 
-    //grunt.registerTask('default', ['jshint']); //,'mochaTest','apidoc'
-    
+    grunt.registerTask('default', ['jshint']); //,'mochaTest','apidoc'
+
     // grunt.registerTask('default', ['jshint']);
 
 };
