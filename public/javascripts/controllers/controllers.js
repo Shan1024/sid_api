@@ -38,7 +38,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       url: '/home',
       templateUrl: 'partials/home.html',
       controller: 'HomeCtrl'
-    }).state('home.profile', {
+    }).state('profile', {
       url: '/profile',
       templateUrl: 'partials/profile.html',
       controller: 'ProfileCtrl'

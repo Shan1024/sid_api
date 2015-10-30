@@ -32,7 +32,7 @@ module.exports = function (app, express) {
         res.render('partials/connectlocal');
     });
 
-    baseRouter.get('/partials/home.html', function (req, res, next) {
+    baseRouter.get('/partials/profile.html', function (req, res, next) {
         console.log(req.user);
 
         User.findById(req.user._id)
@@ -47,14 +47,14 @@ module.exports = function (app, express) {
             //.populate('facebook.ratedByMe')
             .exec(function (error, user) {
                 console.log(JSON.stringify(user, null, "\t"));
-                res.render('partials/home', {user: user});
+                res.render('partials/profile', {user: user});
             });
 
 
     });
 
-    baseRouter.get('/partials/profile.html', function (req, res, next) {
-        res.render('partials/profile');
+    baseRouter.get('/partials/home.html', function (req, res, next) {
+        res.render('partials/home');
     });
 
     baseRouter.get('/signup', function (req, res, next) {
