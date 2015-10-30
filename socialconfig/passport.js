@@ -238,7 +238,7 @@ module.exports = function (passport) {
 
                 } else {
                     // user already exists and is logged in, we have to link accounts
-                    var user = req.user; // pull the user out of the session
+                    var newUser = req.user; // pull the user out of the session
 
 
                     Facebook.findOne({
@@ -247,19 +247,37 @@ module.exports = function (passport) {
 
                         if (fbUser) {
 
-                            fbUser.user = user._id;
+                            var oldUserId = fbUser.user;
+
+                            fbUser.user = newUser._id;
 
                             fbUser.save(function (err) {
                                 if (err)
                                     return done(err);
 
-                                user.userDetails.facebook = fbUser._id;
+                                newUser.userDetails.facebook = fbUser._id;
 
-                                user.save(function (err) {
+                                newUser.save(function (err) {
                                     if (err)
                                         return done(err);
 
-                                    return done(null, user);
+                                    //Content merging
+
+                                    //User.findOne({
+                                    //    _id: oldUserId
+                                    //}, function (err, oldUser) {
+                                    //    User.update(
+                                    //        {_id: newUser._id},
+                                    //        {$addToSet: {'facebook.ratedByMe': {$each: oldUserId.facebook.ratedByMe}}}
+                                    //    )
+                                    //    User.update(
+                                    //        {_id: newUser._id},
+                                    //        {$addToSet: {'facebook.ratedByOthers': {$each: oldUserId.facebook.ratedByOthers}}}
+                                    //    )
+                                    //});
+
+
+                                    return done(null, newUser);
                                 });
                             });
 
@@ -272,19 +290,19 @@ module.exports = function (passport) {
                             facebook.name = profile.displayName;
                             facebook.email = (profile.emails[0].value || '').toLowerCase();
 
-                            facebook.user = user._id;
+                            facebook.user = newUser._id;
 
                             facebook.save(function (err) {
                                 if (err)
                                     return done(err);
 
-                                user.userDetails.facebook = facebook._id;
+                                newUser.userDetails.facebook = facebook._id;
 
-                                user.save(function (err) {
+                                newUser.save(function (err) {
                                     if (err)
                                         return done(err);
 
-                                    return done(null, user);
+                                    return done(null, newUser);
                                 });
                             });
 
