@@ -36,11 +36,10 @@
                 <% if (user.userDetails.facebook) { %>
                     <p>
                         <strong>id</strong>: <%= user.userDetails.facebook.id %><br>
-                        <strong>token</strong>: <%= user.userDetails.facebook.token %><br>
-                        <strong>email</strong>: <%= user.userDetails.facebook.email %><br>
                         <strong>name</strong>: <%= user.userDetails.facebook.name %><br>
+                        <strong>email</strong>: <%= user.userDetails.facebook.email %><br>
+                        <strong>token</strong>: <%= user.userDetails.facebook.token %><br>
                     </p>
-
                     <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
                 <% } else { %>
                     <a href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>

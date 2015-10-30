@@ -32,8 +32,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-apidoc');
 
-    grunt.registerTask('default', ['jshint']); //,'mochaTest','apidoc'
-
+    //grunt.registerTask('default', ['jshint']); //,'mochaTest','apidoc'
+    
     // grunt.registerTask('default', ['jshint']);
 
 };

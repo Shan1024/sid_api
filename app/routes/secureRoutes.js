@@ -2,13 +2,15 @@ var chalk = require('chalk');
 var fs = require('fs');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
-var User = require('../models/user'); // get our mongoose model
+//var User = require('../models/user'); // get our mongoose model
 var facebook = require('../../socialconfig/facebook.js');
 var linkedin = require('../../socialconfig/linkedin.js');
 
 var Entry = require("../models/entry");
 var Facebook = require("../models/facebook");
 var User = require("../models/user");
+
+var mongoose = require('mongoose');
 
 module.exports = function (app, express) {
 
@@ -234,7 +236,8 @@ module.exports = function (app, express) {
                             console.log(chalk.blue("Target found: " + JSON.stringify(target, null, "\t")));
 
                             User.findOne({
-                                _id: me.user,
+                                _id: me.user
+                                ,
                                 'facebook.ratedByMe': {$elemMatch: {targetid: target._id}}
                             }, function (err, user) {
                                 if (user) {
@@ -255,7 +258,7 @@ module.exports = function (app, express) {
 
                                     var entry = {
                                         targetid: target._id
-                                    }
+                                    };
 
                                     User.findOneAndUpdate(
                                         {_id: me.user},
@@ -289,7 +292,7 @@ module.exports = function (app, express) {
 
                 } else {
                     console.log(chalk.red("User not found"));
-                    var me = new Facebook({
+                     me = new Facebook({
                         id: myid
                     });
 
@@ -391,9 +394,9 @@ module.exports = function (app, express) {
     secureRouter.route('/facebook/users/test2')
         .post(function (req, res) {
 
-            //Facebook.findOne({
+            // Facebook.findOne({
             //    id: '100000211592969'
-            //}, function (err, facebook) {
+            // }, function (err, facebook) {
             //    if (err) {
             //        console.log("Error: " + err);
             //    } else {
@@ -415,86 +418,87 @@ module.exports = function (app, express) {
             //                console.log(JSON.stringify(user, null, "\t"))
             //            });
             //    }
-            //});
+            // });
 
 
-            Facebook.findOne({
-                id: '100000211592969'
-            }, function (err, facebook) {
-                console.log(JSON.stringify(facebook, null, "\t"));
-                console.log("------------------------------------------------------------");
-
-                //User.findOne({
-                //    _id: facebook.user
-                //}, function (err, user) {
-                //    console.log(JSON.stringify(user, null, "\t"));
-                //    console.log("****************************************************");
-                //});
-
-                Facebook.findOne({
-                    id: '1199326144'
-                }, function (error, target) {
-
-                    User.findOne({
-                        _id: facebook.user,
-                        'facebook.ratedByMe': {$elemMatch: {targetid: target}}
-                    }, function (err, user) {
-                        console.log(JSON.stringify(user, null, "\t"));
-                        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    });
-
-                })
-
-
-            });
-
-            ////Facebook.find({
-            ////    id: '100000211592969'
-            ////}).populate('user')
-            ////
-            ////    .exec(function (err, facebook) {
-            ////
-            ////    console.log(JSON.stringify(facebook, null, "\t"));
-            ////    console.log("------------------------------------------------------------");
-            ////
-            ////        Facebook.populate(facebook);
+            // Facebook.findOne({
+            //     id: '100000211592969'
+            // }, function (err, facebook) {
+            //     console.log(JSON.stringify(facebook, null, "\t"));
+            //     console.log("------------------------------------------------------------");
             //
-            //    //Facebook.populate(facebook, , function (err, doc) {
-            //    //    console.log(JSON.stringify(doc, null, "\t"));
-            //    //});
+            //     //User.findOne({
+            //     //    _id: facebook.user
+            //     //}, function (err, user) {
+            //     //    console.log(JSON.stringify(user, null, "\t"));
+            //     //    console.log("****************************************************");
+            //     //});
             //
-            //        Facebook.findOne({
-            //            id: '100000211592969'
-            //        })
-            //            .populate('user')
-            //            //.populate({
-            //            //    path: 'user.facebook.ratedByMe',
-            //            //    model: 'FacebookRatedByMe'
-            //            //})
-            //            //.populate('facebook.ratedByMe')
-            //            .exec(function (error, facebook) {
-            //                console.log(JSON.stringify(facebook, null, "\t"))
-            //                var options = {
-            //                    path: 'user.facebook.ratedByMe',
-            //                    model: 'FacebookRatedByMe'
-            //                };
+            //     Facebook.findOne({
+            //         id: '1199326144'
+            //     }, function (error, target) {
             //
-            //                Facebook.populate(facebook, options, function (err, f) {
-            //                    console.log(JSON.stringify(f, null, "\t"));
+            //         User.findOne({
+            //             _id: facebook.user,
+            //             'facebook.ratedByMe': {$elemMatch: {targetid: target}}
+            //         }, function (err, user) {
+            //             console.log(JSON.stringify(user, null, "\t"));
+            //             console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            //         });
             //
-            //                    //Facebook.populate(f, { }, function (err, ok) {
-            //                    //    console.log(JSON.stringify(ok, null, "\t"))
-            //                    //
-            //                    //
-            //                    //
-            //                    //});
+            //     });
             //
-            //                });
             //
-            //            });
-            //res.json({message: "OK"});
+            // });
+
+            //Facebook.find({
+            //    id: '100000211592969'
+            //}).populate('user')
             //
-            //});
+            //    .exec(function (err, facebook) {
+            //
+            //    console.log(JSON.stringify(facebook, null, "\t"));
+            //    console.log("------------------------------------------------------------");
+            //
+            //        Facebook.populate(facebook);
+
+               //Facebook.populate(facebook, , function (err, doc) {
+               //    console.log(JSON.stringify(doc, null, "\t"));
+               //});
+
+                   Facebook.findOne({
+                       id: mongoose.Types.ObjectId("100000211592969")
+                   })
+                       .populate('user')
+                       //.populate({
+                       //    path: 'user.facebook.ratedByMe',
+                       //    model: 'FacebookRatedByMe'
+                       //})
+                       //.populate('facebook.ratedByMe')
+                       .exec(function (error, facebook) {
+                           console.log(JSON.stringify(facebook, null, "\t"))
+                          //  var options = {
+                          //      path: 'user.facebook.ratedByMe',
+                          //      model: 'FacebookRatedByMe'
+                          //  };
+                           //
+                          //  Facebook.populate(facebook, options, function (err, f) {
+                          //      console.log(JSON.stringify(f, null, "\t"));
+                           //
+                          //      //Facebook.populate(f, { }, function (err, ok) {
+                          //      //    console.log(JSON.stringify(ok, null, "\t"))
+                          //      //
+                          //      //
+                          //      //
+                          //      //});
+                           //
+                          //  });
+
+                       });
+
+                       res.json({message: "OK"});
+
+            // });
         });
 
 
@@ -559,7 +563,7 @@ module.exports = function (app, express) {
                     });
                 }
 
-            })
+            });
 
             //Facebook.findOne({
             //    id: '100000211592969'
