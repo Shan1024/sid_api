@@ -8,7 +8,7 @@ var facebookSchema = mongoose.Schema({
     name: String,
     email: String,
     token: String,
-    user:{
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }

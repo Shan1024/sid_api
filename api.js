@@ -66,7 +66,7 @@ require('./app/routes/baseRoutes.js')(app, express);
 require('./app/routes/secureRoutes.js')(app, express);
 require('./app/routes/webRoutes.js')(app, express);
 require('./app/routes/dummyRoutes.js')(app, express);
-
+require('./app/routes/testRoutes.js')(app, express);
 // Create an HTTP service.
 http.createServer(app).listen(config.httpPort);
 console.log(chalk.green("http server started at port " + config.httpPort));

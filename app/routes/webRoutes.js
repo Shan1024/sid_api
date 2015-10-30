@@ -51,7 +51,6 @@ module.exports = function (app, express) {
             });
 
 
-
     });
 
     baseRouter.get('/partials/profile.html', function (req, res, next) {

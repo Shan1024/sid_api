@@ -520,11 +520,11 @@ module.exports = function (app, express) {
 
     // locally --------------------------------
     app.get('/connect/local', function (req, res) {
-      // console.log('inside connect local##################');
-      //   res.render('/partials/connectlocal.html', {
-      //       message: req.flash('loginMessage')
-      //   });
-      res.redirect('/web/connectlocal');
+        // console.log('inside connect local##################');
+        //   res.render('/partials/connectlocal.html', {
+        //       message: req.flash('loginMessage')
+        //   });
+        res.redirect('/web/connectlocal');
     });
 
     app.post('/connect/local', passport.authenticate('local-signup', {
@@ -558,37 +558,37 @@ module.exports = function (app, express) {
             failureRedirect: '/failure'
         }));
 
-        // =============================================================================
-        // UNLINK ACCOUNTS =============================================================
-        // =============================================================================
-        // used to unlink accounts. for social accounts, just remove the token
-        // for local account, remove email and password
-        // user account will stay active in case they want to reconnect in the future
+    // =============================================================================
+    // UNLINK ACCOUNTS =============================================================
+    // =============================================================================
+    // used to unlink accounts. for social accounts, just remove the token
+    // for local account, remove email and password
+    // user account will stay active in case they want to reconnect in the future
 
-        // local -----------------------------------
-        app.get('/unlink/local', function(req, res) {
-            var user            = req.user;
-            user.userDetails.local.username    = undefined;
-            user.userDetails.local.password = undefined;
-            user.save(function(err) {
-                res.redirect('/success');
-            });
+    // local -----------------------------------
+    app.get('/unlink/local', function (req, res) {
+        var user = req.user;
+        user.userDetails.local.username = undefined;
+        user.userDetails.local.password = undefined;
+        user.save(function (err) {
+            res.redirect('/success');
         });
+    });
 
-        // facebook -------------------------------
-        app.get('/unlink/facebook', function(req, res) {
-            var user            = req.user;
-            user.userDetails.facebook= undefined;
-            user.save(function(err) {
-                res.redirect('/success');
-            });
+    // facebook -------------------------------
+    app.get('/unlink/facebook', function (req, res) {
+        var user = req.user;
+        user.userDetails.facebook = undefined;
+        user.save(function (err) {
+            res.redirect('/success');
         });
+    });
 
-        // route for logging out
-      app.get('/logout', function(req, res) {
-          req.logout();
-          res.redirect('/web/');
-      });
+    // route for logging out
+    app.get('/logout', function (req, res) {
+        req.logout();
+        res.redirect('/web/');
+    });
 
     // route middleware to ensure user is logged in
     function isLoggedIn(req, res, next) {
